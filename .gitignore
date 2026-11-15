@@ -1,0 +1,27 @@
+.venv/
+__pycache__/
+*.pyc
+uv.lock
+.DS_Store
+
+# --- personal / user-specific (never commit) ---
+
+# logged-in browser session used for applying
+.browser-profile/
+
+# your main resume and profile (keep the *.example.* templates)
+main/*
+!main/*.example.*
+
+# per-job drafts and PDFs (keep the sample)
+jobs/*
+!jobs/example/
+
+# your search targets and watchlist (copy from the *.example.yaml files)
+search/criteria.yaml
+search/companies.yaml
+
+# search results, board cache, application tracker
+search/inbox.csv
+search/yc_boards.yaml
+tracker/applications.csv

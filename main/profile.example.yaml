@@ -1,0 +1,17 @@
+name: Your Name
+email: you@example.com
+phone: "+1 555 0100"
+location: City, Country
+links:
+  linkedin: https://linkedin.com/in/you
+  github: https://github.com/you
+  website: ""
+# Used to fill portal forms
+first_name: Your
+last_name: Name
+work_authorization: ""      # e.g. "Authorized to work in US, no sponsorship needed"
+requires_sponsorship: false
+notice_period: ""
+salary_expectation: ""
+# Demographic questions: leave "" to skip (adapter will not fill blanks)
+demographics: {}

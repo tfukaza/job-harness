@@ -1,0 +1,23 @@
+approved: true          # example only; real drafts start false
+header:
+  name: Your Name
+  contact: ["you@example.com", "City, Country", "github.com/you"]
+summary: Backend engineer focused on performance and reliable distributed systems.
+experience:
+  - company: Acme Corp
+    title: Senior Engineer
+    dates: "2022 – present"
+    location: Remote
+    source: acme            # main.md id
+    bullets:
+      - text: Led migration of billing service to event-driven architecture, cutting p99 latency 40%.
+        source: acme-1
+        rationale: Directly matches the job's emphasis on performance.
+education:
+  - school: University X
+    degree: BSc Computer Science
+    dates: "2018"
+skills: ["Python", "Go", "Postgres", "Kubernetes"]
+omitted:
+  - source: acme-2
+    rationale: Leadership not requested for this IC role.

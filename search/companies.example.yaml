@@ -1,0 +1,20 @@
+companies:
+  # Greenhouse
+  - {name: Anthropic, ats: greenhouse, slug: anthropic}
+  - {name: Databricks, ats: greenhouse, slug: databricks}
+  - {name: Vercel, ats: greenhouse, slug: vercel}
+  - {name: Stripe, ats: greenhouse, slug: stripe}
+  - {name: Datadog, ats: greenhouse, slug: datadog}
+  - {name: Cloudflare, ats: greenhouse, slug: cloudflare}
+  - {name: Figma, ats: greenhouse, slug: figma}
+  - {name: GitLab, ats: greenhouse, slug: gitlab}
+  # Lever
+  - {name: Palantir, ats: lever, slug: palantir}
+  # Ashby
+  - {name: OpenAI, ats: ashby, slug: openai}
+  - {name: Ramp, ats: ashby, slug: ramp}
+  - {name: Linear, ats: ashby, slug: linear}
+  - {name: Notion, ats: ashby, slug: notion}
+  - {name: Cursor, ats: ashby, slug: cursor}
+  - {name: Modal, ats: ashby, slug: modal}
+  # Early-stage / YC: add slugs here as found (most YC startups use Ashby, Lever or Greenhouse)
