@@ -1,0 +1,8 @@
+# Where to learn your writing voice from (copy to main/voice.yaml; gitignored). Everything stays on this machine.
+transcripts: true          # messages you typed to Claude Code (~/.claude/projects)
+repos: []                  # local repos whose docs/commits you wrote yourself, e.g. ["~/code/my-project"]
+extra_files: []            # past cover letters, essays, blog posts: ["~/Documents/cover-letter-2024.txt"]
+max_chat: 300
+min_words: 6
+prose_before: "2023-01-01"   # only repo text from before AI coding tools counts as your own prose
+git_authors: []   # only your commits (git author names or emails)

@@ -1,0 +1,9 @@
+# How much the agent does on its own. Copy to main/mode.yaml (gitignored). Only YOU change `mode`.
+#   review : you approve every step (draft, PDF, answers) and click Submit yourself.        [default]
+#   assist : the agent does everything including Submit, but first asks you for anything only you can
+#            answer (motives, interests, unknown facts) and records it in main/motivations.md.
+#   yolo   : fully autonomous; uses only recorded facts/motives, never asks, stops if something is missing.
+# Review agents (resume review + review-answers panel) run in every mode.
+mode: review
+max_per_day: 5          # auto-submits per day (assist, yolo)
+max_review_rounds: 2    # REVISE loops before handing over to you

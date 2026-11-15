@@ -183,6 +183,8 @@ def build(job_dir: Path, preview: bool = False) -> tuple[Path, Fit]:
         raise SystemExit("typst not found. Install with `brew install typst`.")
     f = fit(draft_path, draft)
     name = "preview" if preview else "resume"
+    for old in job_dir.glob(f"{name}-*.png"):   # drop stale pages from earlier renders
+        old.unlink()
     base = ["typst", "compile", "--root", str(ROOT), *_inputs(_rel(draft_path), f.preset, preview), str(TEMPLATE)]
     for target in ([str(job_dir / f"{name}.pdf")], ["--ppi", "110", str(job_dir / f"{name}-{{p}}.png")]):
         r = subprocess.run(base + target, capture_output=True, text=True)

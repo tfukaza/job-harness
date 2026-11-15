@@ -183,6 +183,19 @@ def prefs():
         typer.echo(f"  {r['verdict']:<7} {r['company']} - {r['title']}  {('| ' + r['reason']) if r['reason'] else ''}")
 
 
+voice = typer.Typer(help="Learn the user's writing voice from their own text (local only)", no_args_is_help=True)
+app.add_typer(voice, name="voice")
+
+
+@voice.command("collect")
+def voice_collect():
+    """Gather writing samples into main/voice/samples.md (chats with agents, own docs/commits, resume)."""
+    from .voice import collect
+    r = collect()
+    typer.echo(f"{r['chat']} chat messages, {r['prose']} prose pieces, {r['extra']} extra files, "
+               f"{r['bullets']} resume bullets -> {r['out']}")
+
+
 mail = typer.Typer(help="Read-only job email (IMAP: Yahoo, Gmail, Outlook...)", no_args_is_help=True)
 app.add_typer(mail, name="mail")
 
@@ -227,10 +240,28 @@ def build(job_dir: Path,
 
 
 @app.command()
-def apply(job_dir: Path, url: str):
-    """Open portal, fill, attach PDF, pause for you to submit."""
+def apply(job_dir: Path, url: str,
+          submit: bool = typer.Option(False, "--submit", help="assist/yolo mode only: click Submit if every gate passes")):
+    """Open the portal, fill answers.yaml, attach resume.pdf; you submit (or gated auto-submit with --submit)."""
     from .apply import run_apply
-    run_apply(job_dir, url)
+    r = run_apply(job_dir, url, submit)
+    if submit and r.get("submitted"):
+        import yaml as _y
+        a = _y.safe_load((Path(job_dir) / "answers.yaml").read_text()) or {}
+        from . import tracker as _t
+        typer.echo(_t.add(a.get("company", ""), a.get("role", ""), url, str(Path(job_dir) / "resume.pdf"),
+                          "", "auto-submitted (assist/yolo mode)", "applied"))
+
+
+@app.command()
+def form(job_dir: Path, url: str):
+    """List the application form's questions (headless) into jobs/<slug>/form.json."""
+    import json as _j
+    from .apply.base import dump_form
+    fields = dump_form(url)
+    (Path(job_dir) / "form.json").write_text(_j.dumps(fields, indent=2))
+    for f in fields:
+        typer.echo(f"{'*' if f['required'] else ' '} {f['type']:<12} {f['label']}  {f.get('options', '')}")
 
 
 @app.command()
