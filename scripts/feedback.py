@@ -117,6 +117,48 @@ def set_level(job_id: str, years: str, note: str = "") -> dict:
     return row
 
 
+def years_line(row: dict) -> str:
+    if row.get("years_req"):
+        return f"asks {row['years_req']}+ years"
+    if row.get("open_level"):
+        return "open to a range of levels"
+    return f"no years stated ({row['level']})" if row.get("level") else "not assessed yet"
+
+
+def format_card(row: dict) -> str:
+    """The one standard way to show a job to the user."""
+    na = "(not filled in yet)"
+    head = f"{row['id']}  ·  score {row['score']}" if row.get("score") is not None else row["id"]
+    return "\n".join([
+        head,
+        f"  Company:  {row['company']}",
+        f"  Role:     {row['title']}",
+        f"  Comp:     {row.get('comp') or 'not listed'}",
+        f"  Location: {row['location']}",
+        f"  Level:    {years_line(row)}" + (f"  [{row['level_note']}]" if row.get("level_note") else ""),
+        f"  About:    {row.get('summary') or na}",
+        f"  Why you:  {row.get('fit_note') or na}",
+        f"  Link:     {row['url']}",
+    ])
+
+
+def rate(job_id: str, score: str = "", why: str = "", summary: str = "", comp: str = "") -> dict:
+    """Write the agent's judgment for one posting. Only the fields given are changed."""
+    inbox = load_inbox()
+    row = next((r for r in inbox if r["id"] == job_id), None)
+    if not row:
+        raise KeyError(f"no inbox row {job_id}")
+    if score:
+        if not 1 <= float(score) <= 5:
+            raise ValueError("score must be 1-5")
+        row["fit_score"] = score
+    for k, v in (("fit_note", why), ("summary", summary), ("comp", comp)):
+        if v:
+            row[k] = v
+    save_inbox(inbox)
+    return row
+
+
 def record(job_id: str, verdict: str, reason: str = "") -> dict:
     """verdict: like|dislike. Logs it, sets inbox decision, updates learned weights."""
     if verdict not in ("like", "dislike"):

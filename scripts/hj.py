@@ -58,13 +58,37 @@ def batch(n: int = typer.Option(5, "-n", help="How many candidates to show")):
     typer.echo("(WIP ranking: crude heuristic. level comes from `hj assess`; see search/criteria.yaml)")
     if not rows:
         typer.echo("Nothing undecided. Run `hj search` (or `hj search --yc`) for more.")
+    from .feedback import format_card
     for r in rows:
-        typer.echo(f"{r['id']}  [{r['score']}] ({'yrs ' + r['years_req'] if r.get('years_req') else (r.get('level') or 'unassessed')})  {r['company']} - {r['title']} ({r['location']})")
-        if r.get("level_note"):
-            typer.echo(f"          level: {r['level_note']}")
-        if r.get("fit_note"):
-            typer.echo(f"          {r['fit_note']}")
-        typer.echo(f"          {r['url']}")
+        typer.echo("\n" + format_card(r))
+
+
+@app.command()
+def show(job_id: str):
+    """Show one inbox posting in the standard card format."""
+    from .feedback import format_card, load_prefs, score
+    from .search import load_inbox
+    r = next((x for x in load_inbox() if x["id"] == job_id), None)
+    if not r:
+        typer.echo(f"ERROR: no inbox row {job_id}")
+        raise typer.Exit(1)
+    typer.echo(format_card(dict(r, score=score(r, load_prefs()))))
+
+
+@app.command()
+def rate(job_id: str,
+         score: str = typer.Option("", "--score", "-s", help="Fit 1-5"),
+         why: str = typer.Option("", "--why", "-w", help="Why it fits THIS user (cite their experience) + one gap"),
+         summary: str = typer.Option("", "--summary", help="1-2 plain sentences: what the company/role does"),
+         comp: str = typer.Option("", "--comp", help="Pay as stated, e.g. '$200K-$250K + equity'")):
+    """Record the agent's judgment for a posting (fit score, why-it-fits, summary, comp)."""
+    from .feedback import rate as do
+    try:
+        r = do(job_id, score, why, summary, comp)
+    except (KeyError, ValueError) as e:
+        typer.echo(f"ERROR: {e}")
+        raise typer.Exit(1)
+    typer.echo(f"rated {r['company']} - {r['title']}")
 
 
 @app.command()
@@ -80,18 +104,19 @@ def feedback(job_id: str, verdict: str = typer.Argument(..., help="like | dislik
     typer.echo(f"{verdict}: {row['company']} - {row['title']} -> {row['decision']}")
 
 
-@app.command()
-def assess(ids: list[str] = typer.Argument(None, help="Inbox ids; omit with --pending"),
-           pending: bool = typer.Option(False, "--pending", help="Assess undecided rows not yet assessed"),
-           n: int = typer.Option(15, "-n", help="With --pending: how many"),
-           model: str = typer.Option("", help="Override the model (default: criteria `assess_model` or claude-haiku-5-5)")):
-    """Read postings with a cheap LLM; record required years, real seniority and pay. Needs Anthropic credentials."""
-    import yaml
-    from .assess import DEFAULT_MODEL, Assessment, run as do
+assess = typer.Typer(help="Read postings for required years / real seniority / pay (see the assess-postings skill)",
+                     no_args_is_help=True)
+app.add_typer(assess, name="assess")
+
+
+@assess.command("prep")
+def assess_prep(ids: list[str] = typer.Argument(None, help="Inbox ids; omit with --pending"),
+                pending: bool = typer.Option(False, "--pending", help="Undecided rows not yet assessed"),
+                n: int = typer.Option(15, "-n", help="With --pending: how many")):
+    """Fetch posting text to search/postings/<id>.txt for a (cheap-model) subagent to read."""
+    from .assess import prep
     from .feedback import blocked, load_prefs, score
-    from .search import CRIT, load_inbox
-    crit = yaml.safe_load(CRIT.read_text()) or {}
-    use = model or crit.get("assess_model") or DEFAULT_MODEL
+    from .search import load_inbox
     ids = list(ids or [])
     if pending:
         prefs = load_prefs()
@@ -102,17 +127,34 @@ def assess(ids: list[str] = typer.Argument(None, help="Inbox ids; omit with --pe
     if not ids:
         typer.echo("Nothing to assess.")
         return
-    bad = 0
-    for row, a in do(ids, use):
-        if isinstance(a, Assessment):
-            typer.echo(f"{row['id']}  {row['company']} - {row['title']}\n          {row['level']}, years_req={row['years_req'] or '-'}"
-                       f"  ({row['level_note']})")
-        else:
-            bad += 1
-            typer.echo(f"{row['id']}  FAILED {row['company']} - {row['title']}: {a}")
-    if bad:
-        typer.echo(f"{bad} failed. If this is an auth error, set ANTHROPIC_API_KEY or run `ant auth login`.")
+    for row, err in prep(ids):
+        typer.echo(f"{'FAILED ' if err else 'ok     '}{row['id']}  {row['company']} - {row['title']}"
+                   + (f"  ({err})" if err else f"  -> search/postings/{row['id']}.txt"))
+
+
+@assess.command("save")
+def assess_save():
+    """Read subagent JSON (an object or array with an `id` each) from stdin, validate it, write it to the inbox."""
+    import sys
+    from .assess import save
+    try:
+        results = save(sys.stdin.read())
+    except ValueError as e:  # bad JSON
+        typer.echo(f"ERROR: not valid JSON: {e}")
         raise typer.Exit(1)
+    bad = 0
+    for i, err in results:
+        bad += bool(err)
+        typer.echo(f"{'REJECTED ' if err else 'saved    '}{i}{'  ' + err if err else ''}")
+    raise typer.Exit(1 if bad else 0)
+
+
+@assess.command("schema")
+def assess_schema():
+    """Print the JSON the subagent must return (for the skill prompt)."""
+    import json
+    from .assess import AssessmentIn
+    typer.echo(json.dumps(AssessmentIn.model_json_schema(), indent=2))
 
 
 @app.command()

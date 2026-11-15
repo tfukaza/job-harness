@@ -2,13 +2,13 @@ titles: ["backend", "back-end", "back end", "devops", "harness", "site reliabili
 exclude_title: ["intern", "director", "manager", "head of"]
 locations: ["california", "ca", "san francisco", "bay area", "oakland", "berkeley", "san jose", "palo alto", "mountain view", "sunnyvale", "menlo park", "redwood city", "santa clara", "cupertino", "los angeles", "san diego", "irvine", "santa monica", "sacramento", "new york", "ny", "nyc", "brooklyn"]  # whole-word match; empty = any
 
-# Seniority comes from `hj assess`: a cheap LLM reads the whole posting (no regex, titles are unreliable).
+# Seniority comes from the `assess-postings` skill: a cheap-model subagent reads the whole posting (no regex,
+# titles are unreliable).
 # `levels` is the fallback when a posting states no years. Values: intern, new_grad, junior, mid, senior,
 # staff, principal, unclear. Unassessed postings are never hidden.
 levels: ["unclear", "mid", "senior", "staff"]
-assess_model: claude-haiku-5-5   # needs ANTHROPIC_API_KEY (or `ant auth login`)
 
-# Experience fit. `hj assess` records the minimum years each posting requires (`hj level` to fix one by hand).
+# Experience fit. the `assess-postings` skill records the minimum years each posting requires (`hj level` to fix one by hand).
 # Recorded years override the `levels` fallback above. Postings outside [min, max] are hidden from `hj batch`.
 # Set `have_years` to your own years of experience (count from main.yaml). Roles asking for fewer than `min` are too junior; more than
 # `max` is too big a stretch. Edit freely.

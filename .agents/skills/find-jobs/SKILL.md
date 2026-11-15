@@ -16,20 +16,17 @@ State lives in gitignored files: `search/inbox.csv` (postings), `search/feedback
 2. **Pull.** `uv run hj search` (add `--yc` for YC startups). Blocked companies/titles are dropped automatically.
    For wider coverage, WebSearch roles matching `search/criteria.yaml` outside the watchlist; add ATS slugs to
    `search/companies.yaml` and say what you added. No LinkedIn/Indeed scraping.
-3. **Assess, then score only what you will show.** Level and experience are read by a cheap LLM, never by regex
-   (postings word this in too many ways). Run `uv run hj assess --pending -n 15`: it fetches each posting
-   (ATS JSON when possible), and Haiku returns the *required* years, the seniority the role really expects
-   (judged from scope and pay, not the title), whether it welcomes all levels, and a quote as evidence. These
-   are written to the inbox; `hj batch` then applies `years_required` / `levels` from `criteria.yaml` in plain code.
-   Compare with the user's `have_years`, **not their job title**: titles inflate or deflate differently per company
-   (a "Senior Staff" at one firm can be about 5 years of experience). Postings that state no years, or span levels, stay visible.
-   Spot-check the evidence quotes; fix a wrong one with `uv run hj level <id> <years> -n "<why>"`.
-   If `hj assess` fails on credentials (needs `ANTHROPIC_API_KEY` or `ant auth login`), tell the user; as a
-   fallback, read the postings yourself and record with `hj level`, but do not write regexes to do it.
-   Then take `uv run hj batch -n 15`, read each posting against `main/main.yaml` and the preference
-   notes/reasons, and fill `fit_score` (1-5) and a one-line `fit_note` (strength + gap) in `search/inbox.csv`.
-   Do not score the whole inbox.
-4. **Show a small batch.** `uv run hj batch -n 5`. Present id, company, title, location, score, note, URL.
+3. **Assess, then score only what you will show.** Run the `assess-postings` skill on about 15 candidates
+   (cheap-model subagents read each posting; no regex, no API key). Compare with the user's `have_years`, **not
+   their job title**: titles inflate or deflate differently per company (a "Senior Staff" at one firm can be
+   about 5 years). Then take `uv run hj batch -n 15`, read each against `main/main.yaml` and the preference
+   notes/reasons, and record your judgment with `uv run hj rate <id> -s <1-5> -w "<why it fits THIS user>"`
+   (add `--summary` / `--comp` if assess did not fill them). Do not score the whole inbox.
+4. **Show a small batch in the standard card format.** `uv run hj batch -n 5` prints each job as a card
+   (company, role, comp, location, level, about, why it fits you, link); `uv run hj show <id>` prints one.
+   Show cards exactly as printed, without dropping or reordering fields, so every job looks the same.
+   If a card says "(not filled in yet)", fill it first (`hj rate ... --summary/--why`, `hj assess`), and write
+   "Why you" about *this* user: cite their real experience from `main/main.yaml`, then name one gap.
    Do not mark anything yourself (AGENTS.md rule 4).
 5. **Collect feedback.** Ask the user, per posting, like or dislike plus a short *why* (the reason matters more
    than the verdict). Record each: `uv run hj feedback <id> like|dislike -r "<reason>"`.

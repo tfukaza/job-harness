@@ -18,7 +18,7 @@ def _cfg(name):
 CRIT = _cfg("criteria")
 COMP = _cfg("companies")
 INBOX = ROOT / "search" / "inbox.csv"
-FIELDS = ["id", "company", "title", "location", "url", "source", "found", "fit_score", "fit_note", "decision", "years_req", "level_note", "level", "open_level"]
+FIELDS = ["id", "company", "title", "location", "url", "source", "found", "fit_score", "fit_note", "decision", "years_req", "level_note", "level", "open_level", "comp", "summary"]
 TIMEOUT = 20
 
 
@@ -107,7 +107,7 @@ def run(yc=False, refresh=False, limit=None) -> list[dict]:
             seen.add(url)
             new.append(dict(id=hashlib.sha1(url.encode()).hexdigest()[:8], company=co["name"], title=title,
                             location=loc, url=url, source=co["ats"], found=date.today().isoformat(),
-                            fit_score="", fit_note="", decision="new", years_req="", level_note="", level="", open_level=""))
+                            fit_score="", fit_note="", decision="new", years_req="", level_note="", level="", open_level="", comp="", summary=""))
     if new:
         save_inbox(inbox + new)
     return new
