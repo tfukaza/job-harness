@@ -18,7 +18,7 @@ def _cfg(name):
 CRIT = _cfg("criteria")
 COMP = _cfg("companies")
 INBOX = ROOT / "search" / "inbox.csv"
-FIELDS = ["id", "company", "title", "location", "url", "source", "found", "fit_score", "fit_note", "decision"]
+FIELDS = ["id", "company", "title", "location", "url", "source", "found", "fit_score", "fit_note", "decision", "years_req", "level_note", "level", "open_level"]
 TIMEOUT = 20
 
 
@@ -58,6 +58,7 @@ def matches(title: str, location: str, c: dict) -> bool:
     titles = c.get("titles", [])
     if titles and not any(x.lower() in t for x in titles):
         return False
+    # level is NOT filtered here: titles differ across companies, so `hj batch` decides using the posting's years
     locs = c.get("locations", [])
     if locs and not loc_match(loc, locs):
         return False
@@ -85,6 +86,8 @@ def run(yc=False, refresh=False, limit=None) -> list[dict]:
     if yc:
         from . import yc as ycmod
         companies = companies + ycmod.discover(crit, refresh=refresh, limit=limit)
+    from .feedback import blocked, load_prefs
+    prefs = load_prefs()
     inbox = load_inbox()
     seen = {r["url"] for r in inbox} | tracker.urls()
     new = []
@@ -99,12 +102,12 @@ def run(yc=False, refresh=False, limit=None) -> list[dict]:
             print(f"error {co['name']}: {e}")
             continue
         for title, loc, url in postings:
-            if url in seen or not matches(title, loc, crit):
+            if url in seen or not matches(title, loc, crit) or blocked(co["name"], title, prefs):
                 continue
             seen.add(url)
             new.append(dict(id=hashlib.sha1(url.encode()).hexdigest()[:8], company=co["name"], title=title,
                             location=loc, url=url, source=co["ats"], found=date.today().isoformat(),
-                            fit_score="", fit_note="", decision="new"))
+                            fit_score="", fit_note="", decision="new", years_req="", level_note="", level="", open_level=""))
     if new:
         save_inbox(inbox + new)
     return new

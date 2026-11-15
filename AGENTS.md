@@ -11,6 +11,11 @@ This repo turns `main/main.yaml` into tailored resumes and helps apply. **Human-
 
 ## Commands (`uv run hj ...`)
 - `search`: pull postings from `search/companies.yaml`, filter by `search/criteria.yaml`, append to `search/inbox.csv`
+- `batch [-n 5]`: top undecided postings (level-filtered, ranked with learned preferences). **Ranking is WIP**: a crude heuristic, so treat scores as hints, not decisions
+- `feedback <id> like|dislike -r "why"`: record the user's verdict; updates inbox + `search/preferences.yaml`
+- `assess [ids] [--pending -n 15]`: a cheap LLM (Haiku, needs `ANTHROPIC_API_KEY`) reads postings and records required years, real seniority, pay; `batch` filters by `years_required`/`levels` in criteria. No regex over posting prose
+- `level <id> <years> -n why`: manual override of a posting's required years
+- `prefs`: show learned weights, blocks, notes, recent verdicts
 - `intake <url|inbox-id>`: create `jobs/<slug>/job.md`
 - `build <job-dir>`: draft.yaml -> resume.pdf via Typst (needs `typst` on PATH)
 - `apply <job-dir>`: open portal, fill, attach PDF, **pause** for the user to submit

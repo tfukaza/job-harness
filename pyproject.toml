@@ -3,7 +3,13 @@ name = "job-harness"
 version = "0.1.0"
 description = "Human-in-the-loop job application harness"
 requires-python = ">=3.10"
-dependencies = ["pyyaml>=6", "typer>=0.12", "playwright>=1.45", "requests>=2.31"]
+dependencies = [
+    "pyyaml>=6",
+    "typer>=0.12",
+    "playwright>=1.45",
+    "requests>=2.31",
+    "anthropic>=2.8.0",
+]
 
 [project.scripts]
 hj = "scripts.hj:app"

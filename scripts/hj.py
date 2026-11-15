@@ -51,6 +51,97 @@ def search(yc: bool = typer.Option(False, "--yc", help="Also search hiring YC st
 
 
 @app.command()
+def batch(n: int = typer.Option(5, "-n", help="How many candidates to show")):
+    """Show the top-N undecided postings (ranked with learned preferences). WIP ranking."""
+    from .feedback import batch as do
+    rows = do(n)
+    typer.echo("(WIP ranking: crude heuristic. level comes from `hj assess`; see search/criteria.yaml)")
+    if not rows:
+        typer.echo("Nothing undecided. Run `hj search` (or `hj search --yc`) for more.")
+    for r in rows:
+        typer.echo(f"{r['id']}  [{r['score']}] ({'yrs ' + r['years_req'] if r.get('years_req') else (r.get('level') or 'unassessed')})  {r['company']} - {r['title']} ({r['location']})")
+        if r.get("level_note"):
+            typer.echo(f"          level: {r['level_note']}")
+        if r.get("fit_note"):
+            typer.echo(f"          {r['fit_note']}")
+        typer.echo(f"          {r['url']}")
+
+
+@app.command()
+def feedback(job_id: str, verdict: str = typer.Argument(..., help="like | dislike"),
+             reason: str = typer.Option("", "--reason", "-r", help="Why (kept in the log; read by the agent)")):
+    """Record your verdict on an inbox posting; updates inbox + learned preferences."""
+    from .feedback import record
+    try:
+        row = record(job_id, verdict, reason)
+    except (KeyError, ValueError) as e:
+        typer.echo(f"ERROR: {e}")
+        raise typer.Exit(1)
+    typer.echo(f"{verdict}: {row['company']} - {row['title']} -> {row['decision']}")
+
+
+@app.command()
+def assess(ids: list[str] = typer.Argument(None, help="Inbox ids; omit with --pending"),
+           pending: bool = typer.Option(False, "--pending", help="Assess undecided rows not yet assessed"),
+           n: int = typer.Option(15, "-n", help="With --pending: how many"),
+           model: str = typer.Option("", help="Override the model (default: criteria `assess_model` or claude-haiku-5-5)")):
+    """Read postings with a cheap LLM; record required years, real seniority and pay. Needs Anthropic credentials."""
+    import yaml
+    from .assess import DEFAULT_MODEL, Assessment, run as do
+    from .feedback import blocked, load_prefs, score
+    from .search import CRIT, load_inbox
+    crit = yaml.safe_load(CRIT.read_text()) or {}
+    use = model or crit.get("assess_model") or DEFAULT_MODEL
+    ids = list(ids or [])
+    if pending:
+        prefs = load_prefs()
+        rows = [r for r in load_inbox() if r["decision"] == "new" and not r.get("level") and not r.get("years_req")
+                and not blocked(r["company"], r["title"], prefs)]
+        rows.sort(key=lambda r: -score(r, prefs))
+        ids += [r["id"] for r in rows[:n]]
+    if not ids:
+        typer.echo("Nothing to assess.")
+        return
+    bad = 0
+    for row, a in do(ids, use):
+        if isinstance(a, Assessment):
+            typer.echo(f"{row['id']}  {row['company']} - {row['title']}\n          {row['level']}, years_req={row['years_req'] or '-'}"
+                       f"  ({row['level_note']})")
+        else:
+            bad += 1
+            typer.echo(f"{row['id']}  FAILED {row['company']} - {row['title']}: {a}")
+    if bad:
+        typer.echo(f"{bad} failed. If this is an auth error, set ANTHROPIC_API_KEY or run `ant auth login`.")
+        raise typer.Exit(1)
+
+
+@app.command()
+def level(job_id: str, years: str = typer.Argument("", help="Minimum years the posting asks for; '' if not stated"),
+          note: str = typer.Option("", "--note", "-n", help="e.g. 'asks 5+ yrs, owns services end to end'")):
+    """Record a posting's required years of experience (agent-checked). Out-of-range rows leave `hj batch`."""
+    from .feedback import set_level
+    try:
+        r = set_level(job_id, years, note)
+    except (KeyError, ValueError) as e:
+        typer.echo(f"ERROR: {e}")
+        raise typer.Exit(1)
+    typer.echo(f"{r['company']} - {r['title']}: years_req={r['years_req'] or '?'}")
+
+
+@app.command()
+def prefs():
+    """Show learned preferences and recent feedback."""
+    import yaml
+    from .feedback import history, load_prefs
+    p = load_prefs()
+    typer.echo(yaml.safe_dump(p, sort_keys=False).rstrip())
+    h = history()[-10:]
+    typer.echo(f"\nlast {len(h)} verdicts:")
+    for r in h:
+        typer.echo(f"  {r['verdict']:<7} {r['company']} - {r['title']}  {('| ' + r['reason']) if r['reason'] else ''}")
+
+
+@app.command()
 def intake(target: str, company: str = "", role: str = ""):
     """Create jobs/<slug>/job.md from an inbox id or URL."""
     from .job_intake import intake as do

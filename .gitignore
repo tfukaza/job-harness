@@ -23,5 +23,7 @@ search/companies.yaml
 
 # search results, board cache, application tracker
 search/inbox.csv
+search/feedback.csv
+search/preferences.yaml
 search/yc_boards.yaml
 tracker/applications.csv
