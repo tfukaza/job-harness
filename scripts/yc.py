@@ -13,6 +13,7 @@ import requests
 import yaml
 
 from . import ROOT
+from .search import loc_match
 
 HIRING_URL = "https://yc-oss.github.io/api/companies/hiring.json"
 CACHE = ROOT / "search" / "yc_boards.yaml"
@@ -42,7 +43,7 @@ def filter_companies(companies, crit: dict) -> list[dict]:
     stages = [s.lower() for s in yc.get("stages", ["early"])]
     tags = [t.lower() for t in yc.get("tags", [])]
     skip_tags = [t.lower() for t in yc.get("exclude_tags", [])]
-    locs = [x.lower() for x in crit.get("locations", [])]
+    locs = crit.get("locations", [])
     out = []
     for c in companies:
         if c.get("status") != "Active" or not c.get("isHiring"):
@@ -52,7 +53,7 @@ def filter_companies(companies, crit: dict) -> list[dict]:
         if stages and (c.get("stage") or "").lower() not in stages:
             continue
         loc = (c.get("all_locations") or "").lower()
-        if locs and not any(x in loc for x in locs):
+        if locs and not loc_match(loc, locs):
             continue
         ctags = [t.lower() for t in (c.get("tags") or []) + (c.get("industries") or [])]
         if tags and not any(t in ct for t in tags for ct in ctags):

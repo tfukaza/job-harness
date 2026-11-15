@@ -1,6 +1,7 @@
 """Discover postings from public ATS board APIs (Greenhouse, Lever, Ashby)."""
 import csv
 import hashlib
+import re
 from datetime import date
 
 import requests
@@ -45,6 +46,11 @@ def fetch_ashby(slug):
 FETCHERS = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby}
 
 
+def loc_match(location: str, terms) -> bool:
+    """Whole-word match so 'ca' hits 'San Jose, CA' but not 'Canada', 'ny' not 'Germany'."""
+    return any(re.search(rf"\b{re.escape(t.lower())}\b", location.lower()) for t in terms)
+
+
 def matches(title: str, location: str, c: dict) -> bool:
     t, loc = title.lower(), location.lower()
     if any(x.lower() in t for x in c.get("exclude_title", [])):
@@ -53,7 +59,7 @@ def matches(title: str, location: str, c: dict) -> bool:
     if titles and not any(x.lower() in t for x in titles):
         return False
     locs = c.get("locations", [])
-    if locs and not any(x.lower() in loc for x in locs):
+    if locs and not loc_match(loc, locs):
         return False
     return True
 

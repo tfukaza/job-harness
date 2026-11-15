@@ -1,6 +1,6 @@
 titles: ["backend", "back-end", "back end", "devops", "harness", "site reliability", "sre"]   # substring match on title; empty = any
 exclude_title: ["intern", "director", "manager", "head of"]
-locations: ["san francisco", "bay area", "oakland", "berkeley", "san jose", "palo alto", "mountain view", "sunnyvale", "menlo park", "redwood city", "santa clara", "cupertino", "south san francisco", "new york", "nyc", "brooklyn"]  # substring match; empty = any
+locations: ["california", "ca", "san francisco", "bay area", "oakland", "berkeley", "san jose", "palo alto", "mountain view", "sunnyvale", "menlo park", "redwood city", "santa clara", "cupertino", "los angeles", "san diego", "irvine", "santa monica", "sacramento", "new york", "ny", "nyc", "brooklyn"]  # whole-word match; empty = any
 
 # Used by `hj search --yc` (hiring Y Combinator startups; location filter above also applies)
 yc:
