@@ -1,0 +1,8 @@
+# Your personal resume look. Copy to main/resume-style.yaml (gitignored). Any key you omit uses
+# templates/style.default.yaml. Fonts must be installed (this example: `brew install --cask font-geist font-geist-mono`).
+body_font: ["Geist", "Helvetica Neue", "Helvetica", "Arial"]
+mono_font: ["Geist Mono", "Menlo", "Courier New"]
+mono_for: [contact, dates, skills, tagline]   # contact, dates, skills, tagline
+mono_scale: 0.88
+accent: "#1f3a5f"
+muted: "#555555"

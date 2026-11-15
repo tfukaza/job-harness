@@ -64,3 +64,5 @@ remain the author and the result must authentically represent them (AI alone ten
 - **Numbers need provenance.** Quote only figures present in `main/main.yaml` or a cited source, with the comparison
   baseline ("vs. seven competing tools"), and keep scope honest (pilot, single task, etc.).
 - Prefer 3-5 bullets for the most relevant role, 1-3 for older or less relevant ones. Aim for one page.
+- Visual layout (page fill, bold keywords, spacing, skills groups) is the `resume-layout` skill; the template and
+  `hj build` own fonts and spacing, so never adjust those by hand.

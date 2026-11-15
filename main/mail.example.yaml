@@ -1,0 +1,23 @@
+# Copy to main/mail.yaml (gitignored). Read-only IMAP access: this harness can never send mail.
+# The password is NOT stored here: put it in the environment variable named below.
+# Yahoo:  host imap.mail.yahoo.com. Needs an APP PASSWORD (Yahoo Account Security -> Generate app password),
+#         not your normal password.
+# Gmail:  imap.gmail.com (app password, needs 2-step verification). Outlook: outlook.office365.com.
+host: imap.mail.yahoo.com
+port: 993
+user: you@yahoo.com
+password_env: HJ_MAIL_PASSWORD
+folder: INBOX
+# Only messages whose From or Subject contains one of these (case-insensitive) are listed.
+# Company names from the tracker are added automatically.
+senders:
+  - greenhouse.io
+  - ashbyhq.com
+  - lever.co
+  - workday
+  - icims
+  - smartrecruiters
+  - recruit
+  - talent
+  - careers
+  - application

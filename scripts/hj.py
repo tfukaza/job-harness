@@ -183,6 +183,29 @@ def prefs():
         typer.echo(f"  {r['verdict']:<7} {r['company']} - {r['title']}  {('| ' + r['reason']) if r['reason'] else ''}")
 
 
+mail = typer.Typer(help="Read-only job email (IMAP: Yahoo, Gmail, Outlook...)", no_args_is_help=True)
+app.add_typer(mail, name="mail")
+
+
+@mail.command("check")
+def mail_check(days: int = typer.Option(14, help="Look back this many days"),
+               everything: bool = typer.Option(False, "--all", help="Skip the job-related filter")):
+    """List recent job-related messages (uid, date, sender, subject, tracker id)."""
+    from . import mail as m
+    rows = m.check(days, everything)
+    for r in rows:
+        typer.echo(f"{r['uid']:>7}  {r['date']}  {('#' + r['tracker_id']) if r['tracker_id'] else '':<4} "
+                   f"{r['from'][:40]:<40}  {r['subject'][:70]}")
+    typer.echo(f"{len(rows)} message(s)")
+
+
+@mail.command("read")
+def mail_read(uid: str):
+    """Print one message's text (does not mark it read)."""
+    from . import mail as m
+    typer.echo(m.read(uid))
+
+
 @app.command()
 def intake(target: str, company: str = "", role: str = ""):
     """Create jobs/<slug>/job.md from an inbox id or URL."""
@@ -191,10 +214,16 @@ def intake(target: str, company: str = "", role: str = ""):
 
 
 @app.command()
-def build(job_dir: Path):
-    """Render resume.pdf from an approved draft.yaml."""
+def build(job_dir: Path,
+          preview: bool = typer.Option(False, "--preview", help="Render an unapproved draft to preview.pdf/png")):
+    """Render resume.pdf (+ png) from draft.yaml, auto-fitted to one full page; reports fill and layout warnings."""
     from .build import build as do
-    typer.echo(do(job_dir))
+    out, f = do(job_dir, preview)
+    p = f.preset
+    typer.echo(f"{out}  (+ {out.stem}-1.png)")
+    typer.echo(f"{f.verdict}: {f.advice}  [size {p['size']}pt, lead {p['lead']}em, gap {p['gap']}em]")
+    for w in f.warnings:
+        typer.echo(f"warn: {w}")
 
 
 @app.command()

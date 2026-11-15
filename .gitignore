@@ -16,6 +16,8 @@ main/*
 # per-job drafts and PDFs (keep the sample)
 jobs/*
 !jobs/example/
+jobs/example/*.pdf
+jobs/example/*.png
 
 # your search targets and watchlist (copy from the *.example.yaml files)
 search/criteria.yaml
