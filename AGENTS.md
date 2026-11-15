@@ -16,6 +16,8 @@ Ask before installing anything. Run these yourself where you can:
 1. `uv sync`. Needs [uv](https://docs.astral.sh/uv/) and Python 3.10+.
 2. Check `typst` is on PATH (for `hj build`; `brew install typst` or typst.app) and Chromium is installed
    (`uv run playwright install chromium`, for `hj apply`). Offer to install what is missing.
+   The default resume look uses the Geist fonts (`brew install --cask font-geist font-geist-mono`; falls back to
+   Helvetica if missing). Looks are presets in `templates/styles/` (`rails` default, `classic`).
 3. Copy the templates to the user's private files (all gitignored):
    `main/main.example.yaml` -> `main/main.yaml`, `main/profile.example.yaml` -> `main/profile.yaml`,
    `search/criteria.example.yaml` -> `search/criteria.yaml`, `search/companies.example.yaml` -> `search/companies.yaml`.

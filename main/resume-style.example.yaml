@@ -1,8 +1,8 @@
-# Your personal resume look. Copy to main/resume-style.yaml (gitignored). Any key you omit uses
-# templates/style.default.yaml. Fonts must be installed (this example: `brew install --cask font-geist font-geist-mono`).
-body_font: ["Geist", "Helvetica Neue", "Helvetica", "Arial"]
-mono_font: ["Geist Mono", "Menlo", "Courier New"]
-mono_for: [contact, dates, skills, tagline]   # contact, dates, skills, tagline
-mono_scale: 0.88
-accent: "#1f3a5f"
-muted: "#555555"
+# Your personal resume look. Copy to main/resume-style.yaml (gitignored).
+# Pick a preset from templates/styles/ (rails = default, classic) and override only what you want.
+# All keys and what they do: templates/styles/classic.yaml.
+base: rails
+# display_font: ["Some Display Font", "Geist"]   # name + section headings
+# font_paths: ["path/to/fonts"]                  # folders with fonts that are not installed system-wide
+# accent: "#111111"
+# spacing: 1.5

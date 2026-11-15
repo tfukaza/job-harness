@@ -1,0 +1,26 @@
+# Preset "classic": navy uppercase headings, Helvetica, rules across the text column, no rails.
+# Use it with `base: classic` in main/resume-style.yaml. Every key is documented here.
+# Fonts are tried left to right, so a missing font falls back to the next.
+body_font: ["Helvetica Neue", "Helvetica", "Arial"]
+mono_font: ["Menlo", "Courier New"]
+# Which kinds of info are set in the monospace font. Options: contact, dates, skills, tagline
+mono_for: []
+mono_scale: 0.9        # mono text size relative to body (mono fonts look larger)
+accent: "#1f3a5f"      # section headings and rules
+muted: "#555555"       # dates, contact, bullets
+text_color: "#000000"
+display_font: []       # name + section headings; empty = body_font
+display_bold: true
+heading_case: upper    # upper | as-is
+heading_tracking: 0.06 # letter spacing in em
+heading_color: "#1f3a5f"
+rule: solid            # line under section headings: solid | dashed | none
+rule_color: "#1f3a5f"
+rails: false           # dashed vertical lines at the text edges
+rail_color: "#d2d2d2"
+rail_style: dashed     # solid | dashed
+rule_span: text        # heading rules span the text column (text) or the whole page width (page)
+joints: false          # small circles where heading rules cross the rails (needs rails: true)
+joint_radius: 1.8      # pt
+font_paths: []         # extra font folders (relative to the repo, or absolute)
+spacing: 1.0           # multiplier for space between sections and entries (more air = less content fits)

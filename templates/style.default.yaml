@@ -1,9 +1,0 @@
-# Default resume look (tracked). Your personal look goes in main/resume-style.yaml (gitignored); same keys.
-# Fonts are tried left to right, so a missing font falls back to the next.
-body_font: ["Helvetica Neue", "Helvetica", "Arial"]
-mono_font: ["Menlo", "Courier New"]
-# Which kinds of info are set in the monospace font. Options: contact, dates, skills, tagline
-mono_for: []
-mono_scale: 0.9        # mono text size relative to body (mono fonts look larger)
-accent: "#1f3a5f"      # section headings and rules
-muted: "#555555"       # dates, contact, bullets

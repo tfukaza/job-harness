@@ -52,11 +52,24 @@ def _pt(s: str) -> float:
 def _style() -> str:
     """The user's personal look (main/resume-style.yaml) if present, else the tracked default."""
     mine = ROOT / "main" / "resume-style.yaml"
-    return "/main/resume-style.yaml" if mine.exists() else "/templates/style.default.yaml"
+    return "/main/resume-style.yaml" if mine.exists() else "/templates/styles/rails.yaml"
+
+
+def _font_paths() -> list[str]:
+    """Extra font folders from the style file (`font_paths`, relative to the repo or absolute)."""
+    user = yaml.safe_load((ROOT / _style().lstrip("/")).read_text()) or {}
+    base = ROOT / "templates" / "styles" / f"{user.get('base', 'rails')}.yaml"
+    st = {**(yaml.safe_load(base.read_text()) or {}), **user}
+    out = []
+    for f in st.get("font_paths") or []:
+        d = (ROOT / f).resolve() if not Path(f).is_absolute() else Path(f)
+        if d.is_dir():
+            out += ["--font-path", str(d)]
+    return out
 
 
 def _inputs(rel: str, preset: dict, preview: bool) -> list[str]:
-    args = ["--input", f"data={rel}", "--input", f"style={_style()}"]
+    args = [*_font_paths(), "--input", f"data={rel}", "--input", f"style={_style()}"]
     for k, v in preset.items():
         args += ["--input", f"{k}={v}"]
     return args + ["--input", f"preview={'1' if preview else '0'}"]

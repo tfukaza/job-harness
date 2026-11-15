@@ -12,8 +12,14 @@ AGENTS.md still applies (never invent facts; every bullet keeps its `source`).
 
 ## Personal style (fonts, monospace info, colors)
 The user's look lives in `main/resume-style.yaml` (gitignored; template `main/resume-style.example.yaml`, defaults in
-`templates/style.default.yaml`). Keys: `body_font`, `mono_font` (lists, tried in order), `mono_for` (which info is
-monospaced: `contact`, `dates`, `skills`, `tagline`), `mono_scale`, `accent`, `muted`. When the user states a taste
+`templates/styles/`: `rails` is the default, `classic` the alternative; pick one with `base:` and override keys). Keys: `body_font`, `mono_font` (lists, tried in order), `mono_for` (which info is
+monospaced: `contact`, `dates`, `skills`, `tagline`), `mono_scale`, `accent`, `muted`.
+Also: `text_color`, `display_font`/`display_bold` (name + headings), `heading_color`/`heading_case`/
+`heading_tracking`, `rule` (solid/dashed/none) + `rule_color`, `rails` + `rail_color` + `rail_style` (solid/dashed), `rule_span` (text/page), `joints` + `joint_radius`
+(circles where rules cross rails), `font_paths` (extra font folders), `spacing` (air between blocks; more air means
+less content fits, so expect an OVER verdict and cut the least relevant bullets).
+Full key list: `templates/styles/classic.yaml`. To match a site the user points to, read its CSS variables
+(colors, fonts, letter-spacing, borders) and map them onto these keys. When the user states a taste
 ("use font X", "dates in mono", "make headings green"), edit that file, never the template, then rebuild. If a font is
 not installed, tell the user how to install it (e.g. `brew install --cask font-geist font-geist-mono`). Wider fonts can
 change the fit, so rerun the loop below after any style change.
