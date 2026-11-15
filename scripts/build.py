@@ -6,6 +6,7 @@ from pathlib import Path
 import yaml
 
 from . import ROOT
+from .check import MAIN, check_draft
 
 REQUIRED = ["header", "experience", "education", "skills"]
 
@@ -23,6 +24,11 @@ def build(job_dir: Path, template: str = "resume.typ") -> Path:
         for b in e.get("bullets", []):
             if not b.get("source"):
                 raise SystemExit(f"bullet without main source: {b.get('text', '')[:60]!r}")
+    # The tracked sample draft is validated against the tracked sample main resume.
+    main_path = ROOT / "main" / "main.example.yaml" if job_dir.name == "example" else MAIN
+    problems = check_draft(draft, main_path)
+    if problems:
+        raise SystemExit("draft.yaml problems:\n  " + "\n  ".join(problems))
     if not shutil.which("typst"):
         raise SystemExit("typst not found. Install with `brew install typst`.")
     out = job_dir / "resume.pdf"

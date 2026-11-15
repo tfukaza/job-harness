@@ -1,0 +1,47 @@
+# Main resume: write EVERYTHING. The harness cherry-picks bullets by id.
+# Bullet fields: id (unique), text, tags, optional note, optional sub (nested bullets).
+# `uv run hj check` validates this file (unique ids, no placeholders, tags present, open notes).
+
+experience:
+  - id: acme
+    company: Acme Corp
+    title: Senior Engineer
+    start: 2022-01
+    end: present
+    location: Remote
+    summary: One or two lines on the team and scope.
+    sections:
+      - name: Billing platform
+        bullets:
+          - id: acme-1
+            text: "Led migration of the billing service to an event-driven architecture, cutting p99 latency 40%."
+            tags: [backend, performance]
+            sub:
+              - id: acme-1a
+                text: "Detail that supports the parent bullet."
+                tags: [backend]
+          - id: acme-2
+            text: "Mentored 4 junior engineers."
+            tags: [leadership]
+
+projects:
+  - id: side-project
+    name: Side project
+    start: 2024
+    end: present
+    links: [github.com/you/side-project]
+    bullets:
+      - id: proj-1
+        text: "What you built and the outcome."
+        tags: [python]
+
+education:
+  - id: uni
+    school: University X
+    degree: BSc Computer Science
+    graduated: 2018
+    gpa: 3.8
+
+skills:
+  Languages: [Python, Go]
+  Infra & tooling: [Postgres, Kubernetes]

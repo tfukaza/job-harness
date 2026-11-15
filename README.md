@@ -7,11 +7,12 @@ Human-in-the-loop job application harness: one massive main resume -> tailored P
 brew install typst
 uv sync
 uv run playwright install chromium
-cp main/main.example.md main/main.md        # then write everything you've done
-cp main/profile.example.yaml main/profile.yaml
+cp main/main.example.yaml main/main.yaml    # then write everything you have done; `uv run hj check` validates it
+cp main/profile.example.yaml main/profile.yaml   # or just run the `setup-profile` skill and answer its questions
 ```
 
 ## Flow (⛔ = you decide)
+0. `setup-profile` skill (once) -> `main/profile.yaml`: the answers portals keep asking for (authorization, location, salary, ...).
 1. `find-jobs` skill -> `search/inbox.csv`. ⛔ mark rows `interested` / `skip`.
 2. `new-job` skill (<url|inbox id>) -> `jobs/<slug>/job.md`
 3. `tailor-resume` skill -> `jobs/<slug>/draft.yaml` (with rationale). ⛔ edit, set `approved: true`.

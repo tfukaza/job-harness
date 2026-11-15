@@ -71,5 +71,23 @@ def apply(job_dir: Path, url: str):
     run_apply(job_dir, url)
 
 
+@app.command()
+def check(job_dir: Path = typer.Argument(None, help="Optional job dir: also validate its draft.yaml")):
+    """Validate main/main.yaml (and a job's draft.yaml). Exit 1 on errors."""
+    import yaml
+    from . import ROOT
+    from .check import MAIN, check_draft, check_main
+    errors, warnings = check_main()
+    if job_dir:
+        errors += check_draft(yaml.safe_load((job_dir / "draft.yaml").read_text()) or {},
+                              ROOT / "main" / "main.example.yaml" if job_dir.name == "example" else MAIN)
+    for w in warnings:
+        typer.echo(f"warn:  {w}")
+    for e in errors:
+        typer.echo(f"ERROR: {e}")
+    typer.echo(f"{len(errors)} error(s), {len(warnings)} warning(s)")
+    raise typer.Exit(1 if errors else 0)
+
+
 if __name__ == "__main__":
     app()

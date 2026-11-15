@@ -1,17 +1,39 @@
 name: Your Name
+preferred_name: Your Name
+first_name: Your
+last_name: Name
 email: you@example.com
 phone: "+1 555 0100"
-location: City, Country
+location: "City, State"
 links:
   linkedin: https://linkedin.com/in/you
   github: https://github.com/you
   website: ""
-# Used to fill portal forms
-first_name: Your
-last_name: Name
-work_authorization: ""      # e.g. "Authorized to work in US, no sponsorship needed"
+
+# Used to fill portal forms (run the setup-profile skill to fill these interactively)
+work_authorization: ""         # e.g. "Authorized to work in the US"
 requires_sponsorship: false
+over_18: true
+# Only fill when a form explicitly asks. Never put on a resume. Leave "" to skip.
+date_of_birth: ""
+
+willing_to_relocate: false
+relocation_targets: []         # e.g. ["San Francisco Bay Area, CA", "New York, NY"]
+work_arrangement: ""           # e.g. "Remote OK; prefer hybrid"
+salary_expectation: ""         # e.g. "$150,000+"
 notice_period: ""
-salary_expectation: ""
-# Demographic questions: leave "" to skip (adapter will not fill blanks)
-demographics: {}
+earliest_start_date: ""
+
+# For "have you worked here before?" questions
+employers: []
+how_heard: "Company careers page"
+
+pronouns: ""
+# Voluntary self-identification: leave "" to skip (the adapter will not fill blanks)
+demographics:
+  gender: ""
+  hispanic_or_latino: ""
+  race_ethnicity: ""
+  disability_status: ""
+  veteran_status: ""
+  sexual_orientation: ""

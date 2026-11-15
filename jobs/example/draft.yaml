@@ -8,7 +8,7 @@ experience:
     title: Senior Engineer
     dates: "2022 – present"
     location: Remote
-    source: acme            # main.md id
+    source: acme            # main.yaml id
     bullets:
       - text: Led migration of billing service to event-driven architecture, cutting p99 latency 40%.
         source: acme-1
