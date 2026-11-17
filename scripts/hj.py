@@ -2,6 +2,7 @@
 from pathlib import Path
 
 import typer
+import yaml
 
 from . import tracker
 
@@ -59,8 +60,12 @@ def batch(n: int = typer.Option(5, "-n", help="How many candidates to show")):
     if not rows:
         typer.echo("Nothing undecided. Run `hj search` (or `hj search --yc`) for more.")
     from .feedback import format_card
+    seen = set()
     for r in rows:
-        typer.echo("\n" + format_card(r))
+        typer.echo("\n" + format_card(r, r["company"] in seen))
+        seen.add(r["company"])
+    if rows:
+        typer.echo("\nEst. TC = base + guessed annual equity, from public research. It is an estimate, not an offer.")
 
 
 @app.command()
@@ -89,6 +94,59 @@ def rate(job_id: str,
         typer.echo(f"ERROR: {e}")
         raise typer.Exit(1)
     typer.echo(f"rated {r['company']} - {r['title']}")
+
+
+company = typer.Typer(help="Company research notes (what they do, stage, valuation) - see the estimate-comp skill",
+                      no_args_is_help=True)
+app.add_typer(company, name="company")
+
+
+@company.command("save")
+def company_save():
+    """Record research from stdin (YAML or JSON): company, about (~2 sentences), stage, sources[, valuation, notes]."""
+    import sys
+    from .company import save
+    try:
+        d = save(yaml.safe_load(sys.stdin.read()))
+    except (ValueError, TypeError, AttributeError) as e:
+        typer.echo(f"ERROR: {e}")
+        raise typer.Exit(1)
+    typer.echo(f"saved research for {d['company']}")
+
+
+@company.command("show")
+def company_show(name: str):
+    from .company import load
+    d = load(name)
+    typer.echo(yaml.safe_dump(d, sort_keys=False, allow_unicode=True) if d else f"no research for {name}")
+
+
+@company.command("missing")
+def company_missing(n: int = typer.Option(15, "-n", help="Look at the top N undecided postings")):
+    """Companies among the top undecided postings that still need research."""
+    from .company import missing
+    from .feedback import batch as top
+    names = missing(top(n))
+    typer.echo("\n".join(names) if names else "all researched")
+
+
+@app.command()
+def tc(job_id: str,
+       base_low: float = typer.Option(..., help="Annual base, USD (from the posting, or estimated)"),
+       base_high: float = typer.Option(..., help="Annual base, USD"),
+       equity_low: float = typer.Option(..., help="Annualized equity value, USD (grant value / 4 years)"),
+       equity_high: float = typer.Option(..., help="Annualized equity value, USD"),
+       confidence: str = typer.Option(..., help="low | medium | high"),
+       basis: str = typer.Option(..., help="How you got the numbers (sources, assumptions); shown on the card"),
+       bonus: float = typer.Option(0, help="Typical annual cash bonus, USD, if any")):
+    """Record an ESTIMATED total compensation for a posting (see the estimate-comp skill)."""
+    from .company import estimate_tc, tc_line
+    try:
+        r = estimate_tc(job_id, base_low, base_high, equity_low, equity_high, confidence, basis, bonus)
+    except (KeyError, ValueError) as e:
+        typer.echo(f"ERROR: {e}")
+        raise typer.Exit(1)
+    typer.echo(f"{r['company']} - {r['title']}: {tc_line(r)}")
 
 
 @app.command()

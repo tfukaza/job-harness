@@ -125,15 +125,21 @@ def years_line(row: dict) -> str:
     return f"no years stated ({row['level']})" if row.get("level") else "not assessed yet"
 
 
-def format_card(row: dict) -> str:
-    """The one standard way to show a job to the user."""
+def format_card(row: dict, company_seen: bool = False) -> str:
+    """The one standard way to show a job to the user. company_seen: this company's info was already printed above."""
+    from .company import load, tc_line
     na = "(not filled in yet)"
     head = f"{row['id']}  ·  score {row['score']}" if row.get("score") is not None else row["id"]
+    co = load(row["company"])
+    stage = f"  ({co['stage']}{' · ' + co['valuation'] if co.get('valuation') else ''})" if co else ""
+    info = "(see the card above)" if company_seen and co else (co["about"].strip() if co else "(not researched yet)")
     return "\n".join([
         head,
-        f"  Company:  {row['company']}",
+        f"  Company:  {row['company']}{stage}",
+        f"  Co. info: {info}",
         f"  Role:     {row['title']}",
-        f"  Comp:     {row.get('comp') or 'not listed'}",
+        f"  Comp:     {row.get('comp') or 'not listed'}  (as stated in the posting)",
+        f"  Est. TC:  {tc_line(row)}",
         f"  Location: {row['location']}",
         f"  Level:    {years_line(row)}" + (f"  [{row['level_note']}]" if row.get("level_note") else ""),
         f"  About:    {row.get('summary') or na}",

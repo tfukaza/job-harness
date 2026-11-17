@@ -22,8 +22,10 @@ State lives in gitignored files: `search/inbox.csv` (postings), `search/feedback
    firm and 10 at another). Then take `uv run hj batch -n 15`, read each against `main/main.yaml` and the preference
    notes/reasons, and record your judgment with `uv run hj rate <id> -s <1-5> -w "<why it fits THIS user>"`
    (add `--summary` / `--comp` if assess did not fill them). Do not score the whole inbox.
+   Then run the `estimate-comp` skill for the postings you will show: research each new company (2-sentence
+   summary) and record a labeled TC estimate. Every card must carry both.
 4. **Show a small batch in the standard card format.** `uv run hj batch -n 5` prints each job as a card
-   (company, role, comp, location, level, about, why it fits you, link); `uv run hj show <id>` prints one.
+   (company + researched summary, role, stated comp, ESTIMATED TC, location, level, about, why it fits you, link); `uv run hj show <id>` prints one.
    Show cards exactly as printed, without dropping or reordering fields, so every job looks the same.
    If a card says "(not filled in yet)", fill it first (`hj rate ... --summary/--why`, `hj assess`), and write
    "Why you" about *this* user: cite their real experience from `main/main.yaml`, then name one gap.

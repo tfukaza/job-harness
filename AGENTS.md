@@ -18,6 +18,8 @@ This repo turns the user's `main/main.yaml` into tailored resumes and helps them
    **Legal agreements and attestations** (arbitration, certifications, "I confirm that ...") are always the
    user's decision, in every mode; never accept them on the user's behalf.
 7. **Never write regexes to interpret job-posting text** (requirements, level, pay). Use the `assess-postings` skill: a cheap-model subagent reads it.
+8. **Estimates are labeled estimates.** Company summaries and TC figures come from public research (`estimate-comp`
+   skill). Always show TC as a range marked ESTIMATE with its confidence and basis; never state it as a fact or an offer.
 
 ## Set up (when the user says "set up the harness")
 Ask before installing anything. Run these yourself where you can:
@@ -73,8 +75,8 @@ In `review` mode they advise; in `assist`/`yolo` their PASS is the gate. `auto-a
   `years_req` (only real requirements), true seniority, pay and a summary; `hj batch` then hides postings outside
   `years_required` in `criteria.yaml`. Postings stating no years, spanning levels, or welcoming all levels stay visible.
   Compare against the user's `have_years`, never their job title.
-- **Show every job as the standard card** (`hj batch` / `hj show <id>`; do not drop or reorder fields): company, role,
-  comp, location, level, about, why it fits you, link. "Why you" cites the user's real experience from `main.yaml`
+- **Show every job as the standard card** (`hj batch` / `hj show <id>`; do not drop or reorder fields): company + 2-sentence
+  researched summary, role, stated comp, **estimated TC (labeled)**, location, level, about, why it fits you, link. "Why you" cites the user's real experience from `main.yaml`
   and names one gap.
 
 ## Commands (`uv run hj ...`)
@@ -83,6 +85,8 @@ In `review` mode they advise; in `assist`/`yolo` their PASS is the gate. `auto-a
 | `search [--yc]` | Pull postings (Greenhouse/Lever/Ashby APIs; `--yc` adds hiring YC startups) into `search/inbox.csv`; filters from `criteria.yaml`; blocked companies/titles dropped |
 | `assess prep\|save\|schema` | Plumbing for `assess-postings`: `prep` fetches posting text to `search/postings/<id>.txt`; `save` validates subagent JSON from stdin and records it; `schema` prints the JSON shape |
 | `batch [-n 5]` / `show <id>` | Top undecided postings (level-filtered, ranked) as standard cards |
+| `company save\|show\|missing` | Company research notes (what it does, stage, valuation, sources) from the `estimate-comp` skill; shown on every card |
+| `tc <id> --base-low .. --equity-low .. --confidence .. --basis ..` | Record an ESTIMATED total comp for a posting (base + annualized equity); the card labels it an estimate |
 | `rate <id> -s 1-5 -w "why it fits" [--summary --comp]` | Record your judgment for a posting |
 | `feedback <id> like\|dislike -r "why"` | Record the user's verdict; sets inbox decision; updates `search/preferences.yaml` |
 | `level <id> <years> -n "why"` | Manually set a posting's required years |
@@ -102,7 +106,7 @@ In `review` mode they advise; in `assist`/`yolo` their PASS is the gate. `auto-a
 
 ## Skills (agent-agnostic playbooks)
 Plain-markdown playbooks in `.agents/skills/<name>/SKILL.md`: `setup-profile`, `find-jobs`, `assess-postings`,
-`new-job`, `tailor-resume`, `resume-style`, `resume-layout`, `write-answers`, `review-answers`, `fill-in-browser`, `auto-apply`, `apply`, `track`, `check-email`. If your agent has no native skill loader, read the
+`estimate-comp`, `new-job`, `tailor-resume`, `resume-style`, `resume-layout`, `write-answers`, `review-answers`, `fill-in-browser`, `auto-apply`, `apply`, `track`, `check-email`. If your agent has no native skill loader, read the
 matching file and follow it as written. (`.claude/skills` is a symlink to `.agents/skills`.) Deterministic work is in
 the CLI; you do only judgment steps (scoring fit, tailoring, wording, launching cheap subagents).
 
