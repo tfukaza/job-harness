@@ -228,10 +228,12 @@ def intake(target: str, company: str = "", role: str = ""):
 
 @app.command()
 def build(job_dir: Path,
-          preview: bool = typer.Option(False, "--preview", help="Render an unapproved draft to preview.pdf/png")):
+          preview: bool = typer.Option(False, "--preview", help="Render an unapproved draft to preview.pdf/png"),
+          style: str = typer.Option(None, "--style", help="Use a preset from templates/styles/ (e.g. rails) "
+                                    "instead of main/resume-style.yaml")):
     """Render resume.pdf (+ png) from draft.yaml, auto-fitted to one full page; reports fill and layout warnings."""
     from .build import build as do
-    out, f = do(job_dir, preview)
+    out, f = do(job_dir, preview, style)
     p = f.preset
     typer.echo(f"{out}  (+ {out.stem}-1.png)")
     typer.echo(f"{f.verdict}: {f.advice}  [size {p['size']}pt, lead {p['lead']}em, gap {p['gap']}em]")

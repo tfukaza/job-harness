@@ -1,26 +1,116 @@
+# Fictional sample draft (sources are ids in main/main.example.yaml). Also renders the README screenshots.
 approved: true          # example only; real drafts start false
 header:
-  name: Your Name
-  contact: ["you@example.com", "City, Country", "github.com/you"]
-keywords: ["event-driven architecture", "p99 latency 40%"]
-summary: Backend engineer focused on performance and reliable distributed systems.
+  name: Alex Rivera
+  contact: ["alex@example.com", "(555) 010-0100", "Seattle, WA", "github.com/you", "linkedin.com/in/you"]
+keywords: ["event-driven architecture", "p99 latency 40%", "PostgreSQL", "Kubernetes", "distributed tracing",
+           "Go search API", "Kafka"]
+summary: Backend engineer with 7 years building payments and search systems. Focused on performance, reliability
+  and developer experience in distributed services, from database design to CI and on-call.
 experience:
   - company: Acme Corp
-    title: Senior Engineer
+    title: Senior Software Engineer
     dates: "2022 – present"
     location: Remote
     source: acme            # main.yaml id
     bullets:
-      - text: Led migration of billing service to event-driven architecture, cutting p99 latency 40%
+      - text: Led migration of the billing service to an event-driven architecture, cutting p99 latency 40%
         source: acme-1
         rationale: Directly matches the job's emphasis on performance.
+      - text: Designed the Kafka topic layout and idempotent consumers, so retries never double-charge
+        source: acme-1a
+        rationale: The posting asks for reliable event processing.
+      - text: Built a PostgreSQL partitioning scheme for 2 billion invoice rows, keeping monthly reports under 5 seconds
+        source: acme-2
+        rationale: Large-scale database work is a must-have.
+      - text: Cut cloud spend for the payments services by 25% by right-sizing Kubernetes workloads
+        source: acme-3
+        rationale: The team runs on Kubernetes.
+      - text: Introduced contract tests between 6 services, reducing integration incidents from 9 to 2 per quarter
+        source: acme-4
+        rationale: Shows reliability ownership.
+      - text: Rebuilt the CI pipeline with build caching, bringing median build time from 22 to 8 minutes
+        source: acme-6
+        rationale: Developer productivity is in the nice-to-haves.
+      - text: Wrote the on-call runbook and alerting rules adopted by 5 teams
+        source: acme-7
+        rationale: The role joins the on-call rotation.
+      - text: Ran a quarterly game day that found and fixed 11 failure modes before customers hit them
+        source: acme-8
+        rationale: Proactive reliability work.
+      - text: Mentored 4 engineers and ran the team's design review process
+        source: acme-5
+        rationale: Senior role expects mentoring.
+  - company: Globex
+    title: Software Engineer
+    dates: "2019 – 2021"
+    location: Seattle, WA
+    source: globex
+    bullets:
+      - text: Shipped a Go search API serving 3,000 requests per second at 50 ms median latency
+        source: globex-1
+        rationale: Go is the team's main language.
+      - text: Added distributed tracing across 12 services, halving the time to find the cause of incidents
+        source: globex-2
+        rationale: Observability is listed in the posting.
+      - text: Built the A/B testing pipeline used to evaluate every ranking change
+        source: globex-3
+        rationale: Shows data-driven work.
+      - text: Moved the search cluster to Kubernetes with zero downtime during peak holiday traffic
+        source: globex-5
+        rationale: Kubernetes migration experience.
+      - text: Wrote the service template that new backend services start from, used by 20 services
+        source: globex-6
+        rationale: Platform mindset.
+      - text: Automated index rebuilds with Airflow, removing a weekly manual task
+        source: globex-4
+        rationale: Shows automation habits.
+  - company: Initech
+    title: Software Engineering Intern
+    dates: "2018"
+    location: Austin, TX
+    source: initech
+    bullets:
+      - text: Built a React dashboard that replaced 3 spreadsheets for tracking deployments
+        source: initech-1
+        rationale: Shows range beyond the backend.
+      - text: Wrote integration tests that raised coverage of the deploy service from 35% to 80%
+        source: initech-2
+        rationale: Testing discipline from the start.
+projects:
+  - name: tinyqueue
+    tagline: open-source job queue for Python
+    dates: "2023 – present"
+    source: side-project
+    bullets:
+      - text: Wrote a Redis-backed job queue with retries and scheduling, used by about 40 projects on GitHub
+        source: proj-1
+        rationale: Same problem space as the company's job runner.
+      - text: Reached 1,200 GitHub stars; reviewed and merged contributions from 25 people
+        source: proj-2
+        rationale: Open-source maintenance shows collaboration.
+      - text: Wrote the docs site and a 10-minute tutorial that became the most-visited page
+        source: proj-5
+        rationale: Clear technical writing.
+  - name: Transit Alerts
+    tagline: hackathon winner
+    dates: "2020"
+    source: hackathon
+    bullets:
+      - text: Built an SMS service in 48 hours that texts riders when their bus is late; won first place of 60 teams
+        source: proj-3
+        rationale: Shows shipping fast.
+      - text: Deployed on a free cloud tier and handled 5,000 messages on launch day
+        source: proj-4
+        rationale: Shows it ran for real users.
 education:
   - school: University X
-    degree: BSc Computer Science
-    dates: "2018"
+    degree: B.S. Computer Science, GPA 3.8
+    dates: "2019"
 skills:
-  Languages: ["Python", "Go"]
-  Infra: ["Postgres", "Kubernetes"]
-omitted:
-  - source: acme-2
-    rationale: Leadership not requested for this IC role.
+  Languages: ["Python", "Go", "TypeScript", "SQL"]
+  Backend: ["PostgreSQL", "Kafka", "Redis", "gRPC"]
+  Infra & tooling: ["Kubernetes", "Docker", "Terraform", "GitHub Actions"]
+  Observability: ["OpenTelemetry", "Prometheus", "Grafana"]
+  Practices: ["Design reviews", "Incident response", "Code review", "Technical writing"]
+omitted: []

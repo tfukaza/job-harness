@@ -49,15 +49,20 @@ def _pt(s: str) -> float:
     return float(s.removesuffix("pt"))
 
 
-def _style() -> str:
-    """The user's personal look (main/resume-style.yaml) if present, else the tracked default."""
+def _style(preset: str | None = None) -> str:
+    """A named preset from templates/styles/ if given, else the user's personal look (main/resume-style.yaml) if
+    present, else the tracked default."""
+    if preset:
+        if not (ROOT / "templates" / "styles" / f"{preset}.yaml").exists():
+            raise SystemExit(f"unknown style {preset!r}; see templates/styles/")
+        return f"/templates/styles/{preset}.yaml"
     mine = ROOT / "main" / "resume-style.yaml"
     return "/main/resume-style.yaml" if mine.exists() else "/templates/styles/traditional.yaml"
 
 
-def _font_paths() -> list[str]:
+def _font_paths(preset: str | None = None) -> list[str]:
     """Extra font folders from the style file (`font_paths`, relative to the repo or absolute)."""
-    user = yaml.safe_load((ROOT / _style().lstrip("/")).read_text()) or {}
+    user = yaml.safe_load((ROOT / _style(preset).lstrip("/")).read_text()) or {}
     base = ROOT / "templates" / "styles" / f"{user.get('base', 'traditional')}.yaml"
     st = {**(yaml.safe_load(base.read_text()) or {}), **user}
     out = []
@@ -68,15 +73,16 @@ def _font_paths() -> list[str]:
     return out
 
 
-def _inputs(rel: str, preset: dict, preview: bool) -> list[str]:
-    args = [*_font_paths(), "--input", f"data={rel}", "--input", f"style={_style()}"]
+def _inputs(rel: str, preset: dict, preview: bool, style: str | None = None) -> list[str]:
+    args = [*_font_paths(style), "--input", f"data={rel}", "--input", f"style={_style(style)}"]
     for k, v in preset.items():
         args += ["--input", f"{k}={v}"]
     return args + ["--input", f"preview={'1' if preview else '0'}"]
 
 
-def _eval(rel: str, preset: dict, expr: str):
-    r = subprocess.run(["typst", "eval", expr, "--in", str(TEMPLATE), "--root", str(ROOT), *_inputs(rel, preset, False)],
+def _eval(rel: str, preset: dict, expr: str, style: str | None = None):
+    r = subprocess.run(["typst", "eval", expr, "--in", str(TEMPLATE), "--root", str(ROOT),
+                        *_inputs(rel, preset, False, style)],
                        capture_output=True, text=True)
     if r.returncode:
         raise SystemExit(f"typst failed:\n{r.stderr.strip()}")
@@ -137,15 +143,15 @@ def _warnings(draft: dict, p: dict, marks: list) -> list[str]:
     return out
 
 
-def fit(draft_path: Path, draft: dict) -> Fit:
+def fit(draft_path: Path, draft: dict, style: str | None = None) -> Fit:
     """Pick the loosest preset that fits on one page and say whether the content under- or over-fills it."""
     rel = _rel(draft_path)
     for p in PRESETS:
-        end = _eval(rel, p, "query(<end>).map(it => it.value)")[0]
+        end = _eval(rel, p, "query(<end>).map(it => it.value)", style)[0]
         page, fill = end["page"], (_pt(end["y"]) - MARGIN_Y) / USABLE_H
         if page == 1:
             break
-    marks = _eval(rel, p, "query(<bl>).map(it => it.value)")
+    marks = _eval(rel, p, "query(<bl>).map(it => it.value)", style)
     warns = _warnings(draft, p, marks)
     lines = lambda frac: max(1, round(frac * USABLE_H / _line_pitch(p)))
     if page > 1:
@@ -175,7 +181,7 @@ def _validate(job_dir: Path, draft: dict):
         raise SystemExit("draft.yaml problems:\n  " + "\n  ".join(problems))
 
 
-def build(job_dir: Path, preview: bool = False) -> tuple[Path, Fit]:
+def build(job_dir: Path, preview: bool = False, style: str | None = None) -> tuple[Path, Fit]:
     job_dir = Path(job_dir)
     draft_path = job_dir / "draft.yaml"
     draft = yaml.safe_load(draft_path.read_text())
@@ -185,11 +191,12 @@ def build(job_dir: Path, preview: bool = False) -> tuple[Path, Fit]:
     _validate(job_dir, draft)
     if not shutil.which("typst"):
         raise SystemExit("typst not found. Install with `brew install typst`.")
-    f = fit(draft_path, draft)
+    f = fit(draft_path, draft, style)
     name = "preview" if preview else "resume"
     for old in job_dir.glob(f"{name}-*.png"):   # drop stale pages from earlier renders
         old.unlink()
-    base = ["typst", "compile", "--root", str(ROOT), *_inputs(_rel(draft_path), f.preset, preview), str(TEMPLATE)]
+    base = ["typst", "compile", "--root", str(ROOT), *_inputs(_rel(draft_path), f.preset, preview, style),
+            str(TEMPLATE)]
     for target in ([str(job_dir / f"{name}.pdf")], ["--ppi", "110", str(job_dir / f"{name}-{{p}}.png")]):
         r = subprocess.run(base + target, capture_output=True, text=True)
         if r.returncode:

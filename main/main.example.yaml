@@ -1,47 +1,135 @@
 # Main resume: write EVERYTHING. The harness cherry-picks bullets by id.
 # Bullet fields: id (unique), text, tags, optional note, optional sub (nested bullets).
 # `uv run hj check` validates this file (unique ids, no placeholders, tags present, open notes).
+# Everything below is a fictional sample (also used by jobs/example and the README screenshots).
 
 experience:
   - id: acme
     company: Acme Corp
-    title: Senior Engineer
+    title: Senior Software Engineer
     start: 2022-01
     end: present
     location: Remote
-    summary: One or two lines on the team and scope.
+    summary: Payments platform team; owns the billing and invoicing services.
     sections:
       - name: Billing platform
         bullets:
           - id: acme-1
-            text: "Led migration of the billing service to an event-driven architecture, cutting p99 latency 40%."
-            tags: [backend, performance]
+            text: "Led migration of the billing service to an event-driven architecture, cutting p99 latency 40%"
+            tags: [backend, performance, architecture]
             sub:
               - id: acme-1a
-                text: "Detail that supports the parent bullet."
-                tags: [backend]
+                text: "Designed the Kafka topic layout and idempotent consumers, so retries never double-charge"
+                tags: [backend, kafka, reliability]
           - id: acme-2
-            text: "Mentored 4 junior engineers."
+            text: "Built a PostgreSQL partitioning scheme for 2 billion invoice rows, keeping monthly reports under 5 seconds"
+            tags: [databases, performance]
+          - id: acme-3
+            text: "Cut cloud spend for the payments services by 25% by right-sizing Kubernetes workloads"
+            tags: [infrastructure, kubernetes, cost]
+          - id: acme-4
+            text: "Introduced contract tests between 6 services, reducing integration incidents from 9 to 2 per quarter"
+            tags: [testing, reliability]
+          - id: acme-5
+            text: "Mentored 4 engineers and ran the team's design review process"
             tags: [leadership]
+      - name: Developer experience
+        bullets:
+          - id: acme-6
+            text: "Rebuilt the CI pipeline with build caching, bringing median build time from 22 to 8 minutes"
+            tags: [ci, tooling, performance]
+          - id: acme-7
+            text: "Wrote the on-call runbook and alerting rules adopted by 5 teams"
+            tags: [reliability, observability]
+          - id: acme-8
+            text: "Ran a quarterly game day that found and fixed 11 failure modes before customers hit them"
+            tags: [reliability]
+
+  - id: globex
+    company: Globex
+    title: Software Engineer
+    start: 2019-07
+    end: 2021-12
+    location: Seattle, WA
+    summary: Search and recommendations for an online marketplace.
+    sections:
+      - name: Search
+        bullets:
+          - id: globex-1
+            text: "Shipped a Go search API serving 3,000 requests per second at 50 ms median latency"
+            tags: [backend, go, performance]
+          - id: globex-2
+            text: "Added distributed tracing across 12 services, halving the time to find the cause of incidents"
+            tags: [observability, reliability]
+          - id: globex-3
+            text: "Built the A/B testing pipeline used to evaluate every ranking change"
+            tags: [data, experimentation]
+          - id: globex-4
+            text: "Automated index rebuilds with Airflow, removing a weekly manual task"
+            tags: [data, automation]
+          - id: globex-5
+            text: "Moved the search cluster to Kubernetes with zero downtime during peak holiday traffic"
+            tags: [infrastructure, kubernetes]
+          - id: globex-6
+            text: "Wrote the service template that new backend services start from, used by 20 services"
+            tags: [tooling, backend]
+
+  - id: initech
+    company: Initech
+    title: Software Engineering Intern
+    start: 2018-06
+    end: 2018-09
+    location: Austin, TX
+    sections:
+      - name: Internal tools
+        bullets:
+          - id: initech-1
+            text: "Built a React dashboard that replaced 3 spreadsheets for tracking deployments"
+            tags: [frontend, react, tooling]
+          - id: initech-2
+            text: "Wrote integration tests that raised coverage of the deploy service from 35% to 80%"
+            tags: [testing]
 
 projects:
   - id: side-project
-    name: Side project
-    start: 2024
+    name: tinyqueue
+    tagline: open-source job queue for Python
+    start: 2023
     end: present
-    links: [github.com/you/side-project]
+    links: [github.com/you/tinyqueue]
     bullets:
       - id: proj-1
-        text: "What you built and the outcome."
-        tags: [python]
+        text: "Wrote a Redis-backed job queue with retries and scheduling, used by about 40 projects on GitHub"
+        tags: [python, redis, open-source]
+      - id: proj-2
+        text: "Reached 1,200 GitHub stars; reviewed and merged contributions from 25 people"
+        tags: [open-source, leadership]
+      - id: proj-5
+        text: "Wrote the docs site and a 10-minute tutorial that became the most-visited page"
+        tags: [writing, open-source]
+  - id: hackathon
+    name: Transit Alerts
+    tagline: hackathon winner
+    start: 2020
+    end: 2020
+    bullets:
+      - id: proj-3
+        text: "Built an SMS service in 48 hours that texts riders when their bus is late; won first place of 60 teams"
+        tags: [backend, python]
+      - id: proj-4
+        text: "Deployed on a free cloud tier and handled 5,000 messages on launch day"
+        tags: [infrastructure]
 
 education:
   - id: uni
     school: University X
-    degree: BSc Computer Science
-    graduated: 2018
+    degree: B.S. Computer Science
+    graduated: 2019
     gpa: 3.8
 
 skills:
-  Languages: [Python, Go]
-  Infra & tooling: [Postgres, Kubernetes]
+  Languages: [Python, Go, TypeScript, SQL]
+  Backend: [PostgreSQL, Kafka, Redis, gRPC]
+  Infra & tooling: [Kubernetes, Docker, Terraform, GitHub Actions]
+  Observability: [OpenTelemetry, Prometheus, Grafana]
+  Practices: [Design reviews, Incident response, Code review, Technical writing]

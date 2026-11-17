@@ -89,7 +89,7 @@ In `review` mode they advise; in `assist`/`yolo` their PASS is the gate. `auto-a
 | `prefs` | Show learned weights, blocks, notes, recent verdicts |
 | `intake <url\|id>` | Create `jobs/<slug>/job.md` |
 | `check [job-dir]` | Validate `main/main.yaml` (duplicate ids, empty text, placeholders like TODO/XX%, open `note:`s) and a draft's source ids |
-| `build [--preview] <job-dir>` | `draft.yaml` -> `resume.pdf` + PNG via Typst, auto-fitted to one page; prints `OK/UNDER/OVER` + fill % and layout warnings. Final build refuses unapproved drafts, unknown ids, placeholders; `--preview` works on any draft |
+| `build [--preview] [--style <preset>] <job-dir>` | `draft.yaml` -> `resume.pdf` + PNG via Typst, auto-fitted to one page; prints `OK/UNDER/OVER` + fill % and layout warnings. Final build refuses unapproved drafts, unknown ids, placeholders; `--preview` works on any draft; `--style` tries a preset from `templates/styles/` |
 | `voice collect` | Gather the user's own writing (agent chats, pre-AI repo prose, resume) into `main/voice/samples.md` for the `write-answers` voice card; local only |
 | `fill-script <job-dir>` | Write `fill.js` (fills basic fields in the user's tab, hands back what needs real clicks) and `verify.js` (final check before Submit) |
 | `fill-check <job-dir> <url>` | Dry run of the whole hybrid fill in a hidden browser (upload, `fill.js`, simulated agent clicks, `verify.js`); never submits. Must print READY before applying |
