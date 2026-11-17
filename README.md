@@ -1,65 +1,41 @@
 # job-harness
 
 A human-in-the-loop job application harness, built to be driven by a coding agent (Claude Code, Codex, ...).
-Keep one big "main" resume; the agent finds jobs, tailors a PDF per posting, and fills the application form.
-**You approve every step and press Submit yourself.**
+**By default you approve every step and press Submit yourself.**
 
 ## Setup
+1. `git clone https://github.com/tfukaza/job-harness && cd job-harness`
+2. Open the folder in your coding agent and say **"set up the harness"**.
 
-### 1. Get the repo and the tools
-```bash
-git clone https://github.com/tfukaza/job-harness && cd job-harness
-```
-You need:
-- a coding agent (Claude Code, Codex, ...)
-- [uv](https://docs.astral.sh/uv/) and Python 3.10+
-- [Typst](https://typst.app), which builds the resume PDFs: `brew install typst`
-- Chromium, only for automated form filling: `uv run playwright install chromium`
+## What it can do
+- **Find jobs** from company job boards (Greenhouse, Lever, Ashby) and hiring YC startups, filtered by title,
+  location and the years of experience each posting really asks for.
+- **Learn your taste** from every like and dislike, and research each company (what it does, stage, estimated pay).
+- **Tailor a one-page resume** per job from your main resume, without inventing anything, rendered to PDF.
+- **Write form answers** in your own voice, checked by a panel of reviewer agents.
+- **Fill application forms** in your own browser, then stop for you to submit.
+- **Track applications** and read job email (read-only) for replies and interview invites.
 
-You don't have to install these by hand: the agent checks for them in step 2 and asks before installing anything.
+## Workflow
+1. **Find:** say "find me jobs". Like or dislike each job and say why; the next round learns from it.
+2. **Tailor:** pick a job. The agent researches the company and drafts a resume; you edit and approve it.
+3. **Apply:** the agent fills the form and attaches the PDF. You review and press Submit.
+4. **Track:** the tracker and your inbox follow each application from applied to offer.
 
-### 2. Run the setup
-Open the folder in your coding agent and say: **"set up the harness"**. The agent then:
-1. Installs the Python dependencies (`uv sync`) and checks that the tools above are installed.
-2. Copies the example files to your private copies: `main/main.yaml`, `main/profile.yaml`,
-   `search/criteria.yaml` and `search/companies.yaml`.
-3. **Builds your main resume.** Give it your existing resume(s) and it writes everything into `main/main.yaml`,
-   every bullet included. Each tailored resume later picks bullets from this file, and nothing gets invented.
-   Check what it wrote; `uv run hj check` lists anything still missing.
-4. **Fills your profile** by running the `setup-profile` skill. This is a short interview covering the questions
-   application forms keep asking: contact details, work authorization, relocation, salary, and optional
-   demographics (you can skip those). The answers go to `main/profile.yaml`.
-5. **Sets your job search** in `search/criteria.yaml`: job titles, locations, years of experience, and the range
-   of required years you're willing to apply for.
-
-### 3. Optional
-| What | File | How |
-|---|---|---|
-| Companies to watch | `search/companies.yaml` | Add companies by their Greenhouse, Lever or Ashby job-board name |
-| Resume look | `main/resume-style.yaml` | Copy `main/resume-style.example.yaml`. Styles: `traditional` (default, Times New Roman), `rails`, `classic` |
-| Reading job email | `main/mail.yaml` | Copy `main/mail.example.yaml` and set the `HJ_MAIL_PASSWORD` environment variable to an app password. Read-only |
-| How much the agent does alone | `main/mode.yaml` | Copy `main/mode.example.yaml`. `review` is the default (you approve everything) |
-| Answers in your own writing style | `main/voice.yaml` | Copy `main/voice.example.yaml`, then run `uv run hj voice collect` |
-
-Everything in `main/`, `jobs/`, `tracker/` and your search files is gitignored and stays on your machine.
-
-## Resume styles
-Every tailored resume is one full page, auto-fitted by `hj build`. Three looks ship with the harness; pick one with
-`base:` in `main/resume-style.yaml` (or try one with `uv run hj build --style rails jobs/<slug>`).
+## Resume samples
+Pick a style with `base:` in `main/resume-style.yaml`. Click a picture for the PDF (the sample person is fictional).
 
 | `traditional` (default) | `rails` | `classic` |
 |---|---|---|
 | [![traditional](docs/samples/traditional.png)](docs/samples/traditional.pdf) | [![rails](docs/samples/rails.png)](docs/samples/rails.pdf) | [![classic](docs/samples/classic.png)](docs/samples/classic.pdf) |
-| Times New Roman, all black | Geist + Geist Mono, side rails | Helvetica, navy headings |
 
-The sample is fictional: `jobs/example/draft.yaml`, built from `main/main.example.yaml`. Click a picture for its PDF.
-
-## Use
-Say **"find me jobs"**. Like or dislike each job the agent shows, and say why. The next round uses your answers.
-Pick a job and the agent researches the company, then drafts a tailored resume. You review the draft and set
-`approved: true`, and the agent fills the application form. You press Submit.
-
-Everything the agent needs (rules, workflow, commands) is in [AGENTS.md](AGENTS.md).
+## Details
+- Setup installs what's missing (asking first), turns your resume into `main/main.yaml`, interviews you for your
+  profile, and sets your search criteria.
+- Your personal files (resume, profile, jobs, tracker, search results) are gitignored and stay on your machine.
+- How much the agent does on its own is set in `main/mode.yaml`: `review` (default, you approve everything),
+  `assist` or `yolo`.
+- Rules, commands and every option for agents: [AGENTS.md](AGENTS.md).
 
 ## Credits
 `resume-style` paraphrases the [Harvard College Guide to Creating a Strong Resume](https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/)
