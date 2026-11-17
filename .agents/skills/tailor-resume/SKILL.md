@@ -9,18 +9,22 @@ Input: a job directory (`jobs/<slug>/`). If not given, use the most recent one.
 Follow `resume-style` for wording and `resume-layout` for the page. Never add facts (AGENTS.md rule 2).
 
 ## 1. Research the company and the role (do not skip)
-The posting alone is not enough: it is generic, and it hides what the company really builds. A harness company, a
+The posting alone is not enough: it is generic, and it hides what the company really builds. A developer-tools company, a
 fintech and a game studio need different bullets even for the same title.
 - Read `jobs/<slug>/job.md` fully. List must-haves and nice-to-haves **in the posting's own words**.
 - Learn the company: WebSearch / WebFetch their site, product page, engineering blog, launch posts, and what they
   publish (benchmarks, research, open source). Standard searches are enough; prefer the company's own pages and
   say when a claim comes only from third-party coverage. Answer in a few lines:
-  1. What do they build, and what is the *core technical bet*? (e.g. "the agent harness is the product")
+  1. What do they build, and what is the *core technical bet*? (e.g. "the database engine is the product")
   2. What problems will this role's team face in practice (scale, reliability, evals, security, latency...)?
   3. Which terms do they use for their own concepts? (reuse them only where true for the user)
   4. Any signal about the team's stage/culture (research-y, enterprise, early startup)?
 - Send nothing about the user to outside services: search only for the company and role. Never put the user's name,
   employer, or resume text in a query.
+- **Check the company's policy on candidates using AI** (often linked from the application form or careers page,
+  e.g. "candidate AI guidance"). Quote it in research.md. If it requires the applicant to write their own first
+  draft (resume or answers), the harness may only refine what the user wrote: stop and ask the user for their
+  draft in every mode, including yolo.
 - Save the findings as `jobs/<slug>/research.md` (short, with source links). It stays local (gitignored).
 
 ## 2. Build a relevance map before writing anything

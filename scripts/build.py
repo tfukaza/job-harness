@@ -21,12 +21,12 @@ from .check import MAIN, check_draft
 REQUIRED = ["header", "experience", "education", "skills"]
 TEMPLATE = ROOT / "templates" / "resume.typ"
 
-# Loosest first. Font size is fixed at 11pt: page fill comes from content, not bigger text or airy spacing.
+# Loosest first. Font size is fixed at 10pt (every style): page fill comes from content, not bigger text or airy spacing.
 # Only small spacing adjustments are allowed (lead and gap in em, see templates/resume.typ).
 PRESETS = [
-    {"size": 11.0, "lead": 0.70, "gap": 1.05},
-    {"size": 11.0, "lead": 0.66, "gap": 0.95},
-    {"size": 11.0, "lead": 0.62, "gap": 0.85},
+    {"size": 10.0, "lead": 0.70, "gap": 1.05},
+    {"size": 10.0, "lead": 0.66, "gap": 0.95},
+    {"size": 10.0, "lead": 0.62, "gap": 0.85},
 ]
 PAGE_H, MARGIN_Y, MARGIN_X, PAGE_W = 792.0, 36.0, 43.2, 612.0   # us-letter, 0.5in / 0.6in margins (template)
 USABLE_H = PAGE_H - 2 * MARGIN_Y
@@ -52,13 +52,13 @@ def _pt(s: str) -> float:
 def _style() -> str:
     """The user's personal look (main/resume-style.yaml) if present, else the tracked default."""
     mine = ROOT / "main" / "resume-style.yaml"
-    return "/main/resume-style.yaml" if mine.exists() else "/templates/styles/rails.yaml"
+    return "/main/resume-style.yaml" if mine.exists() else "/templates/styles/traditional.yaml"
 
 
 def _font_paths() -> list[str]:
     """Extra font folders from the style file (`font_paths`, relative to the repo or absolute)."""
     user = yaml.safe_load((ROOT / _style().lstrip("/")).read_text()) or {}
-    base = ROOT / "templates" / "styles" / f"{user.get('base', 'rails')}.yaml"
+    base = ROOT / "templates" / "styles" / f"{user.get('base', 'traditional')}.yaml"
     st = {**(yaml.safe_load(base.read_text()) or {}), **user}
     out = []
     for f in st.get("font_paths") or []:
@@ -103,12 +103,16 @@ def _warnings(draft: dict, p: dict, marks: list) -> list[str]:
         s = starts.get(m["id"])
         if not s:
             continue
-        dy = _pt(m["pos"]["y"]) - _pt(s["pos"]["y"])
-        lines = 1 + max(0, round((dy - CAP * p["size"]) / _line_pitch(p)))
         width = avail - (_pt(s["pos"]["x"]) - MARGIN_X)
+        if m["id"] == "summary":
+            # plain paragraph: its markers sit on block edges, so estimate lines from the text width instead
+            lines = max(1, -(-int(_pt(s["w"]) * 1.04) // int(width)))
+        else:
+            dy = _pt(m["pos"]["y"]) - _pt(s["pos"]["y"])
+            lines = 1 + max(0, round((dy - CAP * p["size"]) / _line_pitch(p)))
         last = _pt(s["w"]) - (lines - 1) * width
-        if lines > 2:
-            out.append(f"{m['id']}: {lines} lines; keep bullets to 1-2 lines (split or tighten)")
+        if lines > (3 if m["id"] == "summary" else 2):
+            out.append(f"{m['id']}: {lines} lines; keep {'the summary to 2-3' if m['id'] == 'summary' else 'bullets to 1-2'} lines")
         if lines > 1 and last < 0.18 * width:
             out.append(f"{m['id']}: last line is only a word or two; tighten it to one line or lengthen it "
                        "with true detail from main.yaml")

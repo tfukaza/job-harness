@@ -18,7 +18,7 @@ over_18: true
 date_of_birth: ""
 
 willing_to_relocate: false
-relocation_targets: []         # e.g. ["San Francisco Bay Area, CA", "New York, NY"]
+relocation_targets: []         # e.g. ["Seattle, WA", "Austin, TX"]
 work_arrangement: ""           # e.g. "Remote OK; prefer hybrid"
 salary_expectation: ""         # e.g. "$150,000+"
 notice_period: ""

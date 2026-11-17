@@ -18,8 +18,8 @@ State lives in gitignored files: `search/inbox.csv` (postings), `search/feedback
    `search/companies.yaml` and say what you added. No LinkedIn/Indeed scraping.
 3. **Assess, then score only what you will show.** Run the `assess-postings` skill on about 15 candidates
    (cheap-model subagents read each posting; no regex, no API key). Compare with the user's `have_years`, **not
-   their job title**: titles inflate or deflate differently per company (a "Senior Staff" at one firm can be
-   about 5 years). Then take `uv run hj batch -n 15`, read each against `main/main.yaml` and the preference
+   their job title**: titles inflate or deflate differently per company (a "Senior" title can mean 3 years at one
+   firm and 10 at another). Then take `uv run hj batch -n 15`, read each against `main/main.yaml` and the preference
    notes/reasons, and record your judgment with `uv run hj rate <id> -s <1-5> -w "<why it fits THIS user>"`
    (add `--summary` / `--comp` if assess did not fill them). Do not score the whole inbox.
 4. **Show a small batch in the standard card format.** `uv run hj batch -n 5` prints each job as a card

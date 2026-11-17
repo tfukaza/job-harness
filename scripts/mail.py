@@ -1,4 +1,4 @@
-"""Read-only job-mail access over IMAP (works with Yahoo, Gmail, Outlook, any IMAP server).
+"""Read-only job-mail access over IMAP (works with Gmail, Outlook, Yahoo, any IMAP server).
 
 Never sends, deletes, or marks mail read (BODY.PEEK on a read-only mailbox). No regex: matching is plain substring
 on sender/subject; reading and judging the message is left to the agent.

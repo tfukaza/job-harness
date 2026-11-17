@@ -2,14 +2,14 @@
 // Layout is owned by this file and scripts/build.py; drafts only supply content and `keywords`.
 // Knobs (set by build.py's auto-fit, never by hand): size (pt), lead (em), gap (em). preview=1 adds a draft footer.
 #let d = yaml(sys.inputs.data)
-#let size = float(sys.inputs.at("size", default: "10.5")) * 1pt
+#let size = float(sys.inputs.at("size", default: "10")) * 1pt
 #let lead = float(sys.inputs.at("lead", default: "0.6")) * 1em
 #let gap0 = float(sys.inputs.at("gap", default: "0.8")) * 1em
 #let preview = sys.inputs.at("preview", default: "0") == "1"
-// Look: a preset from templates/styles/ (`base:`, default rails) overlaid with main/resume-style.yaml if it exists.
+// Look: a preset from templates/styles/ (`base:`, default traditional) overlaid with main/resume-style.yaml if it exists.
 // Missing keys fall back to the defaults below.
-#let user-style = yaml(sys.inputs.at("style", default: "/templates/styles/rails.yaml"))
-#let st = yaml("/templates/styles/" + user-style.at("base", default: "rails") + ".yaml") + user-style
+#let user-style = yaml(sys.inputs.at("style", default: "/templates/styles/traditional.yaml"))
+#let st = yaml("/templates/styles/" + user-style.at("base", default: "traditional") + ".yaml") + user-style
 #let body-font = st.at("body_font", default: ("Helvetica Neue", "Helvetica", "Arial"))
 #let mono-font = st.at("mono_font", default: ("Menlo", "Courier New"))
 #let mono-for = st.at("mono_for", default: ())
@@ -111,7 +111,7 @@
 
 #if "summary" in d and d.summary != none [
   #section("Summary")
-  #hl(d.summary)
+  #bullet((text: d.summary, source: "summary"))   // markers let build.py check the summary too
 ]
 
 #section("Experience")

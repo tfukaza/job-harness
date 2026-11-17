@@ -16,7 +16,7 @@ facts, never solve or bypass a CAPTCHA, never answer a question you have no sour
 over to the user (that is a normal, successful outcome, not a failure).
 
 Preconditions: `main/mode.yaml` has `mode: assist` or `mode: yolo` (only the user sets it). The posting passed `find-jobs`
-filters (years range, no customer-facing role, not blocked). Not already in the tracker.
+filters (years range, not blocked). Not already in the tracker.
 
 ## Steps (job dir `jobs/<slug>/`)
 1. `new-job`: `hj intake` (if the page is JS-rendered, use the `hj assess prep` text for `job.md`).
@@ -35,7 +35,8 @@ filters (years range, no customer-facing role, not blocked). Not already in the 
      - label: "Cover Letter"
        skip: true             # only for optional questions
    ```
-   Rules: answer every question in form.json. Facts come from `main/profile.yaml`, `main/main.yaml`, or
+   Rules: answer every question in form.json. Legal agreements and attestations (arbitration, certifications)
+   are never answered by the agent in any mode: assist asks the user, yolo stops. Facts come from `main/profile.yaml`, `main/main.yaml`, or
    `research.md`; otherwise `skip: true` if optional, or **stop** if required. Demographic/EEO questions: use
    `profile.demographics` exactly, blank = skip/decline. Free-text questions: use the `write-answers` skill, then the `review-answers` panel (user's voice from `main/voice.md`, facts from main.yaml
    and research.md only).
@@ -60,7 +61,9 @@ filters (years range, no customer-facing role, not blocked). Not already in the 
    Free-text answers also need the `review-answers` panel; when all lenses pass, append `FINAL: PASS` to
    `answers-review.md` (the submit gate checks for it).
 5. On PASS: set `approved: true` and `approved_by: review-agent` in draft.yaml, `uv run hj build jobs/<slug>`.
-6. `uv run hj apply jobs/<slug> <url> --submit`. The command re-checks every gate (mode assist/yolo, review PASS, answers panel PASS,
+5b. `uv run hj fill-check jobs/<slug> <url>` until it prints READY (fix answers.yaml for every non-OK row).
+6. Submit: if `main/mode.yaml` has `browser: agent` (default), run `uv run hj plan jobs/<slug> <url>` and follow the
+   `fill-in-browser` skill in the user's own browser. If `browser: playwright`, run `uv run hj apply jobs/<slug> <url> --submit`. The command re-checks every gate (mode assist/yolo, review PASS, answers panel PASS,
    all questions answered, no visible CAPTCHA, daily cap, not a duplicate), clicks Submit, waits for a
    confirmation, screenshots `form-after-submit.png`, and adds the tracker row. If it stops, tell the user exactly
    why; the browser stays open for them.

@@ -22,25 +22,43 @@ FIELDS = ["id", "company", "title", "location", "url", "source", "found", "fit_s
 TIMEOUT = 20
 
 
+def _join(locs) -> str:
+    """All of a posting's locations, deduped, in order (boards list a primary office plus others/remote)."""
+    out = []
+    for l in locs:
+        l = (l or "").strip()
+        if l and l not in out:
+            out.append(l)
+    return " | ".join(out)
+
+
 def fetch_greenhouse(slug):
     r = requests.get(f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs", timeout=TIMEOUT)
     r.raise_for_status()
     for j in r.json().get("jobs", []):
-        yield j["title"], (j.get("location") or {}).get("name", ""), j["absolute_url"]
+        locs = [(j.get("location") or {}).get("name", "")] + [o.get("name", "") for o in j.get("offices") or []]
+        yield j["title"], _join(locs), j["absolute_url"]
 
 
 def fetch_lever(slug):
     r = requests.get(f"https://api.lever.co/v0/postings/{slug}?mode=json", timeout=TIMEOUT)
     r.raise_for_status()
     for j in r.json():
-        yield j["text"], (j.get("categories") or {}).get("location", ""), j["hostedUrl"]
+        c = j.get("categories") or {}
+        locs = [c.get("location", "")] + list(c.get("allLocations") or [])   # primary only lists one office
+        if j.get("workplaceType") == "remote":
+            locs.append("Remote")
+        yield j["text"], _join(locs), j["hostedUrl"]
 
 
 def fetch_ashby(slug):
     r = requests.get(f"https://api.ashbyhq.com/posting-api/job-board/{slug}", timeout=TIMEOUT)
     r.raise_for_status()
     for j in r.json().get("jobs", []):
-        yield j["title"], j.get("location", ""), j["jobUrl"]
+        locs = [j.get("location", "")] + [x.get("location", "") for x in j.get("secondaryLocations") or []]
+        if j.get("isRemote"):
+            locs.append("Remote")
+        yield j["title"], _join(locs), j["jobUrl"]
 
 
 FETCHERS = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby}

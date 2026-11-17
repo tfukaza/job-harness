@@ -1,4 +1,4 @@
-# Preset "rails" (the DEFAULT): monochrome greys, Geist + Geist Mono, sentence-case headings, solid side rails,
+# Preset "rails": monochrome greys, Geist + Geist Mono, sentence-case headings, solid side rails,
 # full-width heading rules with small circles where lines cross, generous spacing.
 # Fonts: `brew install --cask font-geist font-geist-mono` (falls back to Helvetica/Menlo if missing).
 # All keys are documented in classic.yaml.

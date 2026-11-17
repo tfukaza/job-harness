@@ -1,7 +1,7 @@
 # Your personal resume look. Copy to main/resume-style.yaml (gitignored).
-# Pick a preset from templates/styles/ (rails = default, classic) and override only what you want.
+# Pick a preset from templates/styles/ (traditional = default, rails, classic) and override only what you want.
 # All keys and what they do: templates/styles/classic.yaml.
-base: rails
+base: traditional
 # display_font: ["Some Display Font", "Geist"]   # name + section headings
 # font_paths: ["path/to/fonts"]                  # folders with fonts that are not installed system-wide
 # accent: "#111111"

@@ -39,14 +39,17 @@ Motives and preferences are facts too: take them from `main/motivations.md` firs
 real motive is unknown: in review and assist modes ask the user and add their answer to `main/motivations.md`;
 in yolo mode use only what is recorded, or stop.
 
+Before writing: if research.md quotes a company policy restricting AI-written applications, do not draft.
+Ask the user for their own draft and only refine it (clarity, flow, concision), keeping their content.
+
 ## Per question
 1. Read the question (and any word/character limit), `research.md`, `job.md`, `draft.yaml`, `main/main.yaml`,
    `main/profile.yaml`, `main/motivations.md`, and `main/voice.md`.
 2. Decide the answer first (see above), then pick evidence: 1-2 true things the user did (main.yaml ids) and the
    specific company facts (research.md) that support it. One real company fact beats three generic ones.
    No invented motives, history, feelings or numbers.
-3. Write it in the voice card, at the register its section 0 sets (the user wants applications a bit more formal
-   than their everyday voice; if the user asks to change formality, edit section 0, not the exemplars): first person, plain words, the user's sentence length and connectors. Default
+3. Write it in the voice card, at the register its section 0 sets (if the user asks to change formality, edit section 0, not the
+   exemplars): first person, plain words, the user's sentence length and connectors. Default
    60-120 words unless the form says otherwise. No greeting, no sign-off, no restating the question.
 4. Self-check, rewrite until all pass:
    - the first sentence answers the question; experience is supporting evidence, not the bulk

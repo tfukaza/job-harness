@@ -5,5 +5,10 @@
 #   yolo   : fully autonomous; uses only recorded facts/motives, never asks, stops if something is missing.
 # Review agents (resume review + review-answers panel) run in every mode.
 mode: review
+# How forms get filled:
+#   agent      : the agent fills the form in YOUR browser with its own browser/computer-use tool (Claude in Chrome,
+#                Claude or Codex computer use, cmux-cua, chrome-devtools MCP...) from `hj plan`. Your sign-ins work. [default]
+#   playwright : the harness drives its own automation browser (`hj apply`); some sites reject it as a bot.
+browser: agent
 max_per_day: 5          # auto-submits per day (assist, yolo)
 max_review_rounds: 2    # REVISE loops before handing over to you

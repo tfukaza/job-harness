@@ -1,6 +1,6 @@
-titles: ["backend", "back-end", "back end", "devops", "harness", "site reliability", "sre"]   # substring match on title; empty = any
+titles: ["software engineer", "backend", "full stack", "platform engineer", "infrastructure"]   # substring match on title; empty = any
 exclude_title: ["intern", "director", "manager", "head of"]
-locations: ["california", "ca", "san francisco", "bay area", "oakland", "berkeley", "san jose", "palo alto", "mountain view", "sunnyvale", "menlo park", "redwood city", "santa clara", "cupertino", "los angeles", "san diego", "irvine", "santa monica", "sacramento", "new york", "ny", "nyc", "brooklyn"]  # whole-word match; empty = any
+locations: ["remote", "seattle", "austin", "new york"]  # whole-word match; empty = any
 
 # Seniority comes from the `assess-postings` skill: a cheap-model subagent reads the whole posting (no regex,
 # titles are unreliable).
@@ -12,14 +12,14 @@ levels: ["unclear", "mid", "senior", "staff"]
 # Recorded years override the `levels` fallback above. Postings outside [min, max] are hidden from `hj batch`.
 # Set `have_years` to your own years of experience (count from main.yaml). Roles asking for fewer than `min` are too junior; more than
 # `max` is too big a stretch. Edit freely.
-have_years: 5   # compare years, never titles: titles inflate or deflate differently per company
+have_years: 4   # compare years, never titles: titles inflate or deflate differently per company
 years_required:
-  min: 3
-  max: 8
+  min: 2
+  max: 7
 
 # Used by `hj search --yc` (hiring Y Combinator startups; location filter above also applies)
 yc:
   min_batch_year: 2022      # skip older batches
-  stages: ["early"]         # early | growth; empty = any
+  stages: []                # early | growth; empty = any
   tags: []                  # e.g. ["developer tools", "b2b", "ai"]; empty = any
   exclude_tags: []          # e.g. ["hard tech", "consumer"]

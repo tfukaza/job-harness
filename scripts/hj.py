@@ -196,7 +196,7 @@ def voice_collect():
                f"{r['bullets']} resume bullets -> {r['out']}")
 
 
-mail = typer.Typer(help="Read-only job email (IMAP: Yahoo, Gmail, Outlook...)", no_args_is_help=True)
+mail = typer.Typer(help="Read-only job email (IMAP: Gmail, Outlook, Yahoo...)", no_args_is_help=True)
 app.add_typer(mail, name="mail")
 
 
@@ -251,6 +251,64 @@ def apply(job_dir: Path, url: str,
         from . import tracker as _t
         typer.echo(_t.add(a.get("company", ""), a.get("role", ""), url, str(Path(job_dir) / "resume.pdf"),
                           "", "auto-submitted (assist/yolo mode)", "applied"))
+
+
+@app.command("fill-check")
+def fill_check(job_dir: Path, url: str):
+    """Dry run of the hybrid fill: runs the generated fill.js headless + test uploads, reads back. Never submits."""
+    from .apply.base import check_fill
+    r = check_fill(job_dir, url)
+    for l in r["filled"]:
+        typer.echo(f"OK       {l[:80]}")
+    for l in r.get("agent_done", []):
+        typer.echo(f"AGENT-OK {l[:80]}  (needs real clicks; the agent does this in the user's browser)")
+    for l, st in r["uploads"]:
+        typer.echo(f"{'UPLOAD' if st == 'OK' else 'FAIL':<8} {l[:60]}  (the agent uploads this first, in the real browser)")
+    for l in r["skipped"]:
+        typer.echo(f"skip     {l[:80]}")
+    for n in r["needs_agent"]:
+        typer.echo(f"AGENT    {n['label'][:60]}  - {n['reason']}")
+    f = r["final"]
+    typer.echo(f"\nFinal check (verify.js): {len(f['verified'])} answers visible")
+    for n in f["not_shown"]:
+        typer.echo(f"NOTSHOWN {n['label'][:60]}  - {n['reason']}")
+    for q in f["required_empty"]:
+        typer.echo(f"EMPTY    {q[:80]}  - required and still empty")
+    for q in f["unmatched_questions"]:
+        typer.echo(f"MISSING  {q[:80]}  - question on the page with no answer in answers.yaml")
+    typer.echo(f"\n{'READY' if r['ok'] else 'NOT READY'}: screenshot at {Path(job_dir) / 'fill-check.png'}")
+    if not r["ok"]:
+        raise typer.Exit(1)
+
+
+@app.command("fill-script")
+def fill_script_cmd(job_dir: Path):
+    """Write jobs/<slug>/fill.js: fills basic fields in the user's tab and reports what needs the agent."""
+    from .apply.plan import fill_script
+    fill_script(job_dir)
+    typer.echo(f"{Path(job_dir) / 'fill.js'} and verify.js  (run in the user's tab; result also in window.__hjFill)")
+
+
+@app.command()
+def plan(job_dir: Path, url: str):
+    """Write fill-plan.md/.json: each field + value, resume path, and whether Submit is allowed (any browser tool)."""
+    from .apply.plan import write
+    out = write(job_dir, url)
+    typer.echo(out.read_text())
+
+
+@app.command()
+def submitted(job_dir: Path, url: str = typer.Option("", help="Posting URL (default: from fill-plan.json)"),
+              note: str = typer.Option("", help="e.g. 'submitted by the user in Chrome'")):
+    """Log a confirmed submission to the tracker (only after the confirmation page was seen)."""
+    import json as _j
+    import yaml as _y
+    from . import tracker as _t
+    jd = Path(job_dir)
+    a = _y.safe_load((jd / "answers.yaml").read_text()) or {}
+    if not url and (jd / "fill-plan.json").exists():
+        url = _j.loads((jd / "fill-plan.json").read_text()).get("url", "")
+    typer.echo(_t.add(a.get("company", ""), a.get("role", ""), url, str(jd / "resume.pdf"), "", note, "applied"))
 
 
 @app.command()

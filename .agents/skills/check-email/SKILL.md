@@ -9,10 +9,10 @@ description: Check the user's job-related email (recruiter replies, rejections, 
 posting). Only look at job-related messages; do not browse the rest of the inbox.
 
 ## Pick the access method
-1. If your agent has a mail connector (Gmail, Outlook, Yahoo...), you may use it, read-only, with the same rules.
-2. Otherwise use the built-in IMAP CLI (works with Yahoo, Gmail, Outlook, anything with IMAP):
-   - First time: copy `main/mail.example.yaml` to `main/mail.yaml` (gitignored) with the user. Yahoo needs an **app
-     password** (Yahoo Account Security -> Generate app password; the normal password will not work). Have the user
+1. If your agent has a mail connector (Gmail, Outlook...), you may use it, read-only, with the same rules.
+2. Otherwise use the built-in IMAP CLI (works with Gmail, Outlook, Yahoo, anything with IMAP):
+   - First time: copy `main/mail.example.yaml` to `main/mail.yaml` (gitignored) with the user. Most providers need an
+     **app password** (generated in the account's security settings; the normal password will not work). Have the user
      export it as `HJ_MAIL_PASSWORD` in their shell (e.g. `! export HJ_MAIL_PASSWORD=...`); never write it to a file or
      paste it into chat.
 

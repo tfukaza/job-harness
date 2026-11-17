@@ -28,7 +28,7 @@ are not from Harvard; they are this repo's own conventions.
 
 ## Don't
 - Use personal pronouns (I, we), narrative style, slang, or colloquialisms.
-- Abbreviate (spell things out; widely known industry terms like "VPN" are fine, **harness addition**).
+- Abbreviate (spell things out; widely known industry terms like "API" or "SQL" are fine, **harness addition**).
 - Include a picture, age, gender, or references.
 - Start each line with a date.
 
@@ -59,7 +59,7 @@ remain the author and the result must authentically represent them (AI alone ten
   that are not in `main/main.yaml` (see AGENTS.md).
 - **One bullet = verb + what you did + result/scale**, one to two lines. Lead with the result when it is the strongest part.
 - **Plain-English test:** could a recruiter with no engineering background tell why it matters? Translate jargon into
-  an outcome ("used 5x less memory so more assistants fit on one server" only if that inference is in the source;
+  an outcome ("cut page load time in half, so checkout felt instant" only if that inference is in the source;
   otherwise state just the measured comparison).
 - **Numbers need provenance.** Quote only figures present in `main/main.yaml` or a cited source, with the comparison
   baseline ("vs. seven competing tools"), and keep scope honest (pilot, single task, etc.).

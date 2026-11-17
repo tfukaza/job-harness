@@ -1,0 +1,25 @@
+# Preset "traditional" (the DEFAULT): black on white, Times New Roman throughout, bold uppercase headings with a thin
+# black rule across the text column, no monospace, no rails. The conservative look recruiters and ATS expect.
+# All keys are documented in classic.yaml.
+body_font: ["Times New Roman", "Times"]
+mono_font: ["Courier New", "Courier"]
+mono_for: []
+mono_scale: 0.9
+text_color: "#000000"
+muted: "#000000"
+accent: "#000000"
+display_font: []          # name + headings use the body font
+display_bold: true
+heading_color: "#000000"
+heading_case: upper
+heading_tracking: 0.04
+rule: solid
+rule_color: "#000000"
+rule_span: text
+rails: false
+rail_style: solid
+rail_color: "#d2d2d2"
+joints: false
+joint_radius: 1.8
+font_paths: []
+spacing: 1.0

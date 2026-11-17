@@ -6,13 +6,13 @@ description: Make a tailored resume look polished - exactly one full page, easy 
 # Resume layout
 
 **The code owns the layout. You own the content.** `templates/resume.typ` fixes fonts, margins, colors and spacing;
-the font is fixed at 11pt and `hj build` only nudges spacing slightly; filling the page is your job, done with content. You never edit the template, font sizes or spacing.
+the font is fixed at 10pt and `hj build` only nudges spacing slightly; filling the page is your job, done with content. You never edit the template, font sizes or spacing.
 You only choose which bullets go in, tighten their wording, and pick `keywords`. Every rule from `resume-style` and
 AGENTS.md still applies (never invent facts; every bullet keeps its `source`).
 
 ## Personal style (fonts, monospace info, colors)
 The user's look lives in `main/resume-style.yaml` (gitignored; template `main/resume-style.example.yaml`, defaults in
-`templates/styles/`: `rails` is the default, `classic` the alternative; pick one with `base:` and override keys). Keys: `body_font`, `mono_font` (lists, tried in order), `mono_for` (which info is
+`templates/styles/`: `traditional` (Times New Roman) is the default, `rails` and `classic` the alternatives; pick one with `base:` and override keys). Keys: `body_font`, `mono_font` (lists, tried in order), `mono_for` (which info is
 monospaced: `contact`, `dates`, `skills`, `tagline`), `mono_scale`, `accent`, `muted`.
 Also: `text_color`, `display_font`/`display_bold` (name + headings), `heading_color`/`heading_case`/
 `heading_tracking`, `rule` (solid/dashed/none) + `rule_color`, `rails` + `rail_color` + `rail_style` (solid/dashed), `rule_span` (text/page), `joints` + `joint_radius`
@@ -48,10 +48,10 @@ change the fit, so rerun the loop below after any style change.
 - **Order inside a role:** the bullet that best matches the job's must-haves goes first.
 - **Keywords (bold):** put a `keywords:` list in draft.yaml, 8-15 items total, at most 2 per bullet. Choose short
   phrases (1-3 words) that are both (a) in the job's requirements and (b) literally in your bullet text and true per
-  main.yaml: tools (`Google ADK`, `Python SDK`), techniques (`agent evals`), outcomes (`3 to 18 times less memory`).
+  main.yaml: tools (`Kubernetes`, `PostgreSQL`), techniques (`event-driven architecture`), outcomes (`p99 latency 40%`).
   Never bold whole sentences, generic words ("developed", "team"), or anything not in the posting's language.
 - **Skills:** a mapping of 2-4 groups, most relevant group first, e.g.
-  `skills: {AI & agents: [Google ADK, ...], Languages: [Python, ...], Infra & tooling: [Docker, ...]}`.
+  `skills: {Backend: [gRPC, ...], Languages: [Python, ...], Infra & tooling: [Docker, ...]}`.
   Only items from main.yaml's skills (or tools named in included bullets).
 - **Header:** name + contact list. Contact items short: `github.com/user`, `linkedin.com/in/user`, no `https://`.
   The template keeps it on one line.
